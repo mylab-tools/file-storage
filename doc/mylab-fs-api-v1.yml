@@ -1,0 +1,277 @@
+openapi: 3.0.0
+info:
+  title: MyLab.FileStorage API
+  version: '1'
+tags:
+  - name: Files
+  - name: Upload
+  - name: Download
+servers:
+- url: http://base.addr/v1
+paths:
+  
+  '/files/{file_id}':
+    
+    get:
+      parameters:
+      - $ref: '#/components/parameters/FileId'
+      tags:
+      - Files
+      summary: Get file info
+      description: Get stored file info
+      responses:
+        '200':
+          description: Stored file info
+          content:
+            'application/application-json':
+              schema:
+                $ref: '#/components/schemas/StoredFile'
+        '401':
+          description: Invalid token
+        '404':
+          description: File not found
+          
+    delete:
+      parameters:
+      - $ref: '#/components/parameters/FileId'
+      tags:
+      - Files
+      summary: Delete file
+      description: Delete stored file
+      responses:
+        '204':
+          description: Successfully deleted or not found
+  
+  '/files/new':
+      
+    post:
+      tags:
+      - Upload
+      summary: Create new upload
+      description: Create new file upload and upload-token
+      responses:
+        '200':
+          description: Upload token
+          content:
+            'text/plain':
+              schema:
+                $ref: '#/components/schemas/UploadToken'
+          
+  '/files/new/next-chunk':
+  
+    parameters:
+    - $ref: '#/components/parameters/UploadToken'
+    
+    post:
+      tags:
+      - Upload
+      summary: Upload next chunk
+      description: Upload next file chunk 
+      responses:
+        '201': 
+          description: Successfull uploaded
+        '401':
+          description: Invalid token
+          
+  '/files/new/completion':
+  
+    parameters:
+    - $ref: '#/components/parameters/UploadToken'
+    
+    post:
+      tags:
+      - Upload
+      summary: Complete uploading
+      description: Complete upload and post metadata
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/UploadCompletion'
+      responses:
+        '201': 
+          description: New file identifier
+          
+        '401':
+          description: Invalid token
+          
+  '/files/{file_id}/download-token':
+    
+    parameters:
+    - $ref: '#/components/parameters/FileId'
+      
+    post:
+      tags:
+      - Download
+      summary: Create new download token
+      description: Create new download token
+      responses:
+        '200':
+          description: Download token
+          content:
+            'text/plain':
+              schema:
+                $ref: '#/components/schemas/DownloadToken'
+        '404':
+          description: File not found
+      
+  '/files/by-token/content':
+    
+    get:
+      parameters:
+      - $ref: '#/components/parameters/DownloadToken'
+      - $ref: '#/components/parameters/Range'
+      tags:
+      - Download
+      summary: Download file content
+      description: Download file content chank with download-token
+      responses:
+        '200':
+          description: requested data
+          content:
+            'application/octet-stream':
+              schema:
+                type: string
+                format: binary
+              example: "[example binary string]"
+        '401':
+          description: Invalid token
+        '404':
+          description: File not found
+        '416':
+          description: Invalid range
+          
+  '/files/{file_id}/content':
+    
+    get:
+      parameters:
+      - $ref: '#/components/parameters/FileId'
+      - $ref: '#/components/parameters/Range'
+      tags:
+      - Download
+      summary: Download file content
+      description: Download file content chank with file identifier
+      responses:
+        '200':
+          description: requested data
+          content:
+            'application/octet-stream':
+              schema:
+                type: string
+                format: binary
+              example: "[example binary string]"
+        '404':
+          description: File not found
+        '416':
+          description: Invalid range
+      
+components:
+  parameters:
+  
+    FileId:
+      in: path
+      required: true
+      name: file_id
+      schema:
+        $ref: '#/components/schemas/FileId'
+  
+    DownloadToken:
+      in: query
+      name: token
+      required: true
+      schema:
+        $ref: '#/components/schemas/DownloadToken'
+      
+    UploadToken:
+      in: header
+      required: true
+      name: X-UploadToken
+      schema:
+        $ref: '#/components/schemas/UploadToken'
+        
+    Range:
+      name: Range
+      description:  Indicates the part of a document that the server should return.
+      required: false
+      in: header
+      schema:
+        $ref: '#/components/schemas/Range'
+  
+  schemas:
+  
+    FileId:
+      type: string
+      description: File unique identifier
+      format: guid
+      example: '94b721e7bbfe4109864dcd8bef70d48e'
+    
+    StoredFile:
+      type: object
+      description: Stored file informtaion
+      properties:
+        id:
+          $ref: '#/components/schemas/FileId'
+        metadata:
+          $ref: '#/components/schemas/FileMetadata'
+        md5:
+          $ref: '#/components/schemas/Md5Checksum'
+        created:
+          type: string
+          format: date-time
+          example: '2001-01-01 21:22:23'
+    
+    FileMetadata:
+      type: object
+      description: Additional file data
+      properties:
+        filename:
+          type: string
+          description: File name
+          example: doc.txt
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            owner: user@host.com
+            sign: b2xvbG8=
+    
+    UploadCompletion:
+      type: object
+      properties:
+        md5:
+          $ref: '#/components/schemas/Md5Checksum'
+        metadata:
+          $ref: '#/components/schemas/FileMetadata'
+    
+    Md5Checksum:
+      type: string 
+      format: base64
+      example: 'YzZiNWY0ODc3NGFhMGE4N2E4MmEyNzZmZjg2YmU1MDcgIC4vUkVBRE1FLm1kCg=='
+      description: File MD5 check sum
+    
+    DownloadToken:
+      type: string
+      description: Defines file access credentials for downloading
+      format: jwt
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWQiOiI3Y2U4OTljMDI0M2U0NzdkODgxNjE3NjMzNzlhZDZmZiIsImV4cCI6MTUxNjIzOTAyMiwiYmt0IjoiY2l0aXplbi1kb2NzIn0.Eq0hiGZyXU2UwUWbwZ9TwnCwlsH9RqBmk1h40IDXllk"
+      
+    UploadToken:
+      type: string
+      description: Defines file access credentials for uploading
+      format: jwt
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWQiOiI3Y2U4OTljMDI0M2U0NzdkODgxNjE3NjMzNzlhZDZmZiIsImV4cCI6MTUxNjIzOTAyMiwiYmt0IjoiY2l0aXplbi1kb2NzIn0.Eq0hiGZyXU2UwUWbwZ9TwnCwlsH9RqBmk1h40IDXllk"
+      
+    DocumentToken:
+      type: string
+      description: Contains signed uploaded file info 'StoredFile'
+      format: jwt
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWQiOiI3Y2U4OTljMDI0M2U0NzdkODgxNjE3NjMzNzlhZDZmZiIsImV4cCI6MTUxNjIzOTAyMiwiYmt0IjoiY2l0aXplbi1kb2NzIn0.Eq0hiGZyXU2UwUWbwZ9TwnCwlsH9RqBmk1h40IDXllk"
+      
+    Range:
+      type: string
+      description: Defines a requested range of data
+      example: "bytes=0-499"
+      externalDocs:
+        description: Find more info here
+        url: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Range
