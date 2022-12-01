@@ -22,8 +22,8 @@ public class Md5ContextBehavior
         
 
         //Act
-        var data = originCtx.SerializeAsync();
-        var restoredCtx = Md5Ex.Md5Context.DeserializeAsync(data);
+        var data = originCtx.Serialize();
+        var restoredCtx = Md5Ex.Md5Context.Deserialize(data);
 
         //Assert
         Assert.NotNull(restoredCtx);

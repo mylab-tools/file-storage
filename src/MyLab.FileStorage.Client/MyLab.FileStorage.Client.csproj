@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <Authors>Andrey O.</Authors>
+    <Copyright>Copyright (c) 2022 Andrey Osintsev &lt;ozzy.ext@gmail.com&gt;</Copyright>
+    <PackageProjectUrl>https://github.com/mylab-tools/file-storage</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mylab-tools/file-storage.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>tools.png</PackageIcon>
+    <AssemblyVersion>1.0.0.2911</AssemblyVersion>
+    <FileVersion>1.0.0.2911</FileVersion>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\MyLab.FileStorage\Models\JsonConverters.cs" Link="Models\JsonConverters.cs" />
+    <Compile Include="..\MyLab.FileStorage\Models\NewFileDto.cs" Link="Models\NewFileDto.cs" />
+    <Compile Include="..\MyLab.FileStorage\Models\StoredFileMetadataDto.cs" Link="Models\StoredFileMetadataDto.cs" />
+    <Compile Include="..\MyLab.FileStorage\Models\UploadCompletionDto.cs" Link="Models\UploadCompletionDto.cs" />
+    <Compile Include="..\MyLab.FileStorage\Tools\DocumentToken.cs" Link="Tools\DocumentToken.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.0" />
+    <PackageReference Include="MyLab.ApiClient" Version="3.16.25" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="tools.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Tools\" />
+  </ItemGroup>
+
+</Project>

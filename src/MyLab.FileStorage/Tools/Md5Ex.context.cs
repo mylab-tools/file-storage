@@ -16,6 +16,23 @@ public partial class Md5Ex
         /// input buffer 
         /// </summary>
         public byte[] Buffer { get; } = new byte[64];
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="Md5Context"/>
+        /// </summary>
+        public Md5Context()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="Md5Context"/>
+        /// </summary>
+        public Md5Context(Md5Context initial)
+        {
+            initial.Buffer.CopyTo(Buffer, 0);
+            initial.Count.CopyTo(Count, 0);
+            initial.State.CopyTo(State, 0);
+        }
         
         public void Clear()
         {
@@ -24,7 +41,7 @@ public partial class Md5Ex
             Array.Clear(Buffer, 0, Buffer.Length);
         }
 
-        public byte[] SerializeAsync()
+        public byte[] Serialize()
         {
             var resultBuff = new byte[
                 sizeof(uint) * State.Length +
@@ -49,7 +66,7 @@ public partial class Md5Ex
             return resultBuff;
         }
 
-        public static Md5Context DeserializeAsync(byte[] initialData)
+        public static Md5Context Deserialize(byte[] initialData)
         {
             var ctx = new Md5Context();
 

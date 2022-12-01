@@ -72,6 +72,8 @@ paths:
           description: Successfull uploaded
         '401':
           description: Invalid token
+        '413':
+          description: Chunk is too large
           
   '/files/new/completion':
   
@@ -90,10 +92,17 @@ paths:
               $ref: '#/components/schemas/UploadCompletion'
       responses:
         '201': 
-          description: New file identifier
-          
+          description: New file info
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/NewFile'
+        '400':
+          description: Bad request
         '401':
           description: Invalid token
+        '409':
+          description: Invalid checksum
           
   '/files/{file_id}/download-token':
     
@@ -199,6 +208,15 @@ components:
   
   schemas:
   
+    NewFile:
+      type: object
+      description: File creation result
+      properties:
+        file:
+          $ref: '#/components/schemas/StoredFile'
+        token:
+          $ref: '#/components/schemas/FileToken'
+  
     FileId:
       type: string
       description: File unique identifier
@@ -211,19 +229,12 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/FileId'
-        metadata:
-          $ref: '#/components/schemas/FileMetadata'
-        md5:
-          $ref: '#/components/schemas/Md5Checksum'
         created:
           type: string
           format: date-time
           example: '2001-01-01 21:22:23'
-    
-    FileMetadata:
-      type: object
-      description: Additional file data
-      properties:
+        md5:
+          $ref: '#/components/schemas/Md5Checksum'
         filename:
           type: string
           description: File name
@@ -238,16 +249,26 @@ components:
     
     UploadCompletion:
       type: object
+      description: Contains info for upload completion
       properties:
         md5:
           $ref: '#/components/schemas/Md5Checksum'
-        metadata:
-          $ref: '#/components/schemas/FileMetadata'
+        filename:
+          type: string
+          description: File name
+          example: doc.txt
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            owner: user@host.com
+            sign: b2xvbG8=
     
     Md5Checksum:
       type: string 
-      format: base64
-      example: 'YzZiNWY0ODc3NGFhMGE4N2E4MmEyNzZmZjg2YmU1MDcgIC4vUkVBRE1FLm1kCg=='
+      format: hex
+      example: 'e807f1fcf82d132f9bb018ca6738a19f'
       description: File MD5 check sum
     
     DownloadToken:
@@ -260,9 +281,9 @@ components:
       type: string
       description: Defines file access credentials for uploading
       format: jwt
-      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWQiOiI3Y2U4OTljMDI0M2U0NzdkODgxNjE3NjMzNzlhZDZmZiIsImV4cCI6MTUxNjIzOTAyMiwiYmt0IjoiY2l0aXplbi1kb2NzIn0.Eq0hiGZyXU2UwUWbwZ9TwnCwlsH9RqBmk1h40IDXllk"
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWxlX2lkIjoiMzdhOTU0ZGI5NjNiNDY0Yzk2MWE4ZmMzN2U3YTU2ODQiLCJuYmYiOjE2Njk2NDg4MjAsImV4cCI6MTY2OTY0ODgyMSwiaWF0IjoxNjY5NjQ4ODIwfQ.mYrAzrGNkZRoUzSTdZ7EbB2JydYAsZePDp8EAMDD7tE"
       
-    DocumentToken:
+    FileToken:
       type: string
       description: Contains signed uploaded file info 'StoredFile'
       format: jwt
