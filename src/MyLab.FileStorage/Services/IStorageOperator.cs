@@ -3,7 +3,7 @@ using MyLab.FileStorage.Tools;
 
 namespace MyLab.FileStorage.Services;
 
-public interface IStorageStrategy
+public interface IStorageOperator
 {
     Task TouchBaseDirectoryAsync(Guid fileId);
 

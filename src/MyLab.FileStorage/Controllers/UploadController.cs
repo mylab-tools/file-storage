@@ -16,12 +16,12 @@ namespace MyLab.FileStorage.Controllers
     [ApiController]
     public class UploadController : ControllerBase
     {
-        private readonly IStorageService _storageService;
+        private readonly IUploadService _uploadService;
         private readonly FsOptions _options;
 
-        public UploadController(IStorageService storageService, IOptions<FsOptions> options)
+        public UploadController(IUploadService uploadService, IOptions<FsOptions> options)
         {
-            _storageService = storageService;
+            _uploadService = uploadService;
             _options = options.Value;
             _options.Validate();
         }
@@ -29,11 +29,7 @@ namespace MyLab.FileStorage.Controllers
         [HttpPost]
         public IActionResult CreateNewUploading()
         {
-            var uploadToken = UploadToken.New();
-
-            var tokenStr = uploadToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
-
-            return Ok(tokenStr);
+            return Ok(_uploadService.CreateUploadToken());
         }
 
         [ErrorToResponse(typeof(SecurityTokenValidationException), HttpStatusCode.Unauthorized, "Invalid token")]
@@ -51,14 +47,15 @@ namespace MyLab.FileStorage.Controllers
 
 
             byte[] data = await ReadChunkFromRequest(Request.BodyReader, (int)Request.ContentLength.Value);
-            
-            await _storageService.AppendFileAsync(token.FileId, data);
 
-            return Ok(token);
+            await _uploadService.AppendFileData(token.FileId, data);
+            
+            return Ok();
 
         }
 
         [ErrorToResponse(typeof(SecurityTokenValidationException), HttpStatusCode.Unauthorized, "Invalid token")]
+        [ErrorToResponse(typeof(BadChecksumException), HttpStatusCode.Conflict, "Bad checksum")]
         [HttpPost("completion")]
         public async Task<IActionResult> CompleteUploading([FromHeader(Name = "X-UploadToken")] string uploadToken, [FromBody]UploadCompletionDto uploadCompletionDto)
         {
@@ -68,29 +65,8 @@ namespace MyLab.FileStorage.Controllers
                 return BadRequest("Filename is not specified");
 
             var token = UploadToken.VerifyAndDeserialize(uploadToken, _options.TokenSecret!);
-            
-            bool fileHashOk = await _storageService.CheckAndDeleteMd5Async(token.FileId, uploadCompletionDto.Md5);
 
-            if (!fileHashOk)
-                return Conflict("Invalid checksum");
-
-            var metadata = new StoredFileMetadataDto
-            {
-                Md5 = uploadCompletionDto.Md5,
-                Filename = uploadCompletionDto.Filename,
-                Id = token.FileId,
-                Labels = uploadCompletionDto.Labels
-            };
-
-            await _storageService.SaveMetadataAsync(token.FileId, metadata);
-
-            var docToken = new DocumentToken(metadata);
-
-            var newFile = new NewFileDto
-            {
-                File = metadata,
-                Token = docToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.DocTokenTtlSec))
-            };
+            var newFile = await _uploadService.CompleteFileCreation(token.FileId, uploadCompletionDto);
 
             return Ok(newFile);
         }

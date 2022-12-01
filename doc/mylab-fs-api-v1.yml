@@ -68,7 +68,7 @@ paths:
       summary: Upload next chunk
       description: Upload next file chunk 
       responses:
-        '201': 
+        '200': 
           description: Successfull uploaded
         '401':
           description: Invalid token

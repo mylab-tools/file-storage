@@ -33,7 +33,7 @@ namespace FuncTests
             //Arrange
             var resultFileContent = new StringBuilder();
 
-            var storageStrategyMock = new Mock<IStorageStrategy>();
+            var storageStrategyMock = new Mock<IStorageOperator>();
             storageStrategyMock
                 .Setup(s => s.AppendContentAsync(It.IsAny<Guid>(), It.IsAny<byte[]>()))
                 .Callback<Guid, byte[]>((s, data) =>
@@ -83,7 +83,7 @@ namespace FuncTests
             md5.AppendData(fileData);
             var fileMd5Ctx = new Md5Ex.Md5Context(md5.Context);
 
-            var storageStrategyMock = new Mock<IStorageStrategy>();
+            var storageStrategyMock = new Mock<IStorageOperator>();
             storageStrategyMock
                 .Setup(s => s.ReadHashCtxAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(fileMd5Ctx);
@@ -147,7 +147,7 @@ namespace FuncTests
             
             Md5Ex.Md5Context? fileMd5Ctx = null;
 
-            var storageStrategyMock = new Mock<IStorageStrategy>();
+            var storageStrategyMock = new Mock<IStorageOperator>();
 
             storageStrategyMock
                 .Setup(s => s.WriteHashCtxAsync(It.IsAny<Guid>(), It.IsAny<Md5Ex.Md5Context>()))

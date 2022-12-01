@@ -1,0 +1,94 @@
+﻿using Microsoft.Extensions.Options;
+using MyLab.FileStorage.Models;
+using MyLab.FileStorage.Tools;
+using MyLab.Log;
+
+namespace MyLab.FileStorage.Services;
+
+class UploadService : IUploadService
+{
+    private readonly IStorageOperator _operator;
+    private readonly FsOptions _options;
+
+    public UploadService(IStorageOperator @operator, IOptions<FsOptions> options)
+    {
+        _operator = @operator;
+        _options = options.Value;
+    }
+
+    public string CreateUploadToken()
+    {
+        var uploadToken = UploadToken.New();
+
+        return uploadToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
+    }
+
+    public async Task AppendFileData(Guid fileId, byte[] chunk)
+    {
+        await _operator.TouchBaseDirectoryAsync(fileId);
+
+        await _operator.AppendContentAsync(fileId, chunk);
+
+        var hashCtx = await _operator.ReadHashCtxAsync(fileId);
+
+        var hash = hashCtx != null
+            ? new Md5Ex(hashCtx)
+            : new Md5Ex();
+
+        hash.AppendData(chunk);
+
+        await _operator.WriteHashCtxAsync(fileId, hash.Context);
+    }
+
+    public async Task<NewFileDto> CompleteFileCreation(Guid fileId, UploadCompletionDto completion)
+    {
+        if (completion.Md5 == null)
+            throw new BadChecksumException();
+
+        bool fileHashOk = await CheckAndDeleteMd5Async(fileId, completion.Md5);
+
+        if (!fileHashOk)
+            throw new BadChecksumException();
+
+        var metadata = new StoredFileMetadataDto
+        {
+            Md5 = completion.Md5,
+            Filename = completion.Filename,
+            Id = fileId,
+            Labels = completion.Labels
+        };
+
+        await _operator.TouchBaseDirectoryAsync(fileId);
+
+        await _operator.WriteMetadataAsync(fileId, metadata);
+
+        var docToken = new DocumentToken(metadata);
+
+        return new NewFileDto
+        {
+            File = metadata,
+            Token = docToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.DocTokenTtlSec))
+        };
+    }
+
+    async Task<bool> CheckAndDeleteMd5Async(Guid fileId, byte[] controlMd5)
+    {
+        var hashCtx = await _operator.ReadHashCtxAsync(fileId);
+
+        if (hashCtx == null)
+            throw new InvalidOperationException("Hash context not found")
+                .AndFactIs("file-id", fileId.ToString("N"));
+
+        var storedFileMd5 = new Md5Ex(hashCtx);
+        var hash = storedFileMd5.FinalHash();
+
+        bool success = hash.SequenceEqual(controlMd5);
+
+        if (success)
+        {
+            await _operator.DeleteHashCtxAsync(fileId);
+        }
+
+        return success;
+    }
+}

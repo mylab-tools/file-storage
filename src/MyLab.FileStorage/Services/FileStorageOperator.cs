@@ -7,12 +7,12 @@ using Newtonsoft.Json;
 
 namespace MyLab.FileStorage.Services;
 
-class FileStorageStrategy : IStorageStrategy
+class FileStorageOperator : IStorageOperator
 {
 
     private readonly FileIdToNameConverter _fileIdConverter;
 
-    public FileStorageStrategy(IOptions<FsOptions> options)
+    public FileStorageOperator(IOptions<FsOptions> options)
     {
         _fileIdConverter = new FileIdToNameConverter(options.Value.Directory);
     }

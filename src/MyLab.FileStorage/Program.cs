@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddControllers(opt => opt.AddExceptionProcessing())
     .AddNewtonsoftJson();
-builder.Services.AddSingleton<IStorageService, StorageService>();
-builder.Services.AddSingleton<IStorageStrategy, FileStorageStrategy>();
+builder.Services.AddSingleton<IUploadService, UploadService>();
+builder.Services.AddSingleton<IStorageOperator, FileStorageOperator>();
 
 var app = builder.Build();
 
