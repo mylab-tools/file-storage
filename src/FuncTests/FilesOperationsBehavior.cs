@@ -61,5 +61,33 @@ namespace FuncTests
             Assert.Equal(fileId, file.Id);
             Assert.Equal("foo", file.Filename);
         }
+
+        [Fact]
+        public async Task ShouldDeleteFile()
+        {
+            //Arrange
+            var fileId = Guid.NewGuid();
+
+            var storageOpMock = new Mock<IStorageOperator>();
+
+            var api = _api.StartWithProxy(srv => srv
+                .AddSingleton(storageOpMock.Object)
+                .AddLogging(lb => lb
+                    .ClearProviders()
+                    .AddFilter(l => true)
+                    .AddXUnit(_output)
+                )
+                .Configure<FsOptions>(opt =>
+                {
+                    opt.TokenSecret = "1234567890123456";
+                })
+            );
+
+            //Act
+            await api.DeleteFileAsync(fileId);
+
+            //Assert
+            storageOpMock.Verify(op => op.DeleteFile(fileId));
+        }
     }
 }
