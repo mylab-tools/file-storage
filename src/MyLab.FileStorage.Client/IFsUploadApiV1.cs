@@ -27,6 +27,6 @@ namespace MyLab.FileStorage.Client
         /// Completes upload and posts metadata
         /// </summary>
         [Post("completion")]
-        Task<NewFileDto> CompleteFileUploading([Header("X-UploadToken")] string uploadToken, [JsonContent] UploadCompletionDto uploadCompletion);
+        Task<NewFileDto> CompleteFileUploadingAsync([Header("X-UploadToken")] string uploadToken, [JsonContent] UploadCompletionDto uploadCompletion);
     }
 }

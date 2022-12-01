@@ -44,6 +44,21 @@ class FileStorageOperator : IStorageOperator
         await wrtr.WriteAsync(metadataStr);
     }
 
+    public async Task<StoredFileMetadataDto?> ReadMetadataAsync(Guid fileId)
+    {
+        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        
+        if (!File.Exists(filename)) return null;
+
+        await using var strm = new FileStream(filename, FileMode.Open);
+        using var rdr = new StreamReader(strm);
+
+        var str = await rdr.ReadToEndAsync();
+
+        return JsonConvert.DeserializeObject<StoredFileMetadataDto>(str);
+
+    }
+
     public Task WriteHashCtxAsync(Guid fileId, Md5Ex.Md5Context context)
     {
         var filename = _fileIdConverter.ToMetadataFile(fileId);
@@ -68,6 +83,18 @@ class FileStorageOperator : IStorageOperator
         var fi = new FileInfo(filename);
         
         if(fi.Exists) fi.Delete();
+
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteFile(Guid fileId)
+    {
+        var path = _fileIdConverter.ToDirectory(fileId);
+
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, true);
+        }
 
         return Task.CompletedTask;
     }
