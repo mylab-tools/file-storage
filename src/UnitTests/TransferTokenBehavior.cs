@@ -3,12 +3,12 @@ using Xunit.Abstractions;
 
 namespace UnitTests
 {
-    public class UploadTokenBehavior
+    public class TransferTokenBehavior
     {
         private readonly ITestOutputHelper _output;
         private const string TestSecret = "1234567890123456";
         
-        public UploadTokenBehavior(ITestOutputHelper output)
+        public TransferTokenBehavior(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -23,7 +23,7 @@ namespace UnitTests
             var fileId = Guid.Parse(fileIdStr);
 
             //Act
-            var actualToken = UploadToken.VerifyAndDeserialize(tokenStr, TestSecret);
+            var actualToken = TransferToken.VerifyAndDeserialize(tokenStr, TestSecret);
 
             //Assert
             Assert.NotNull(actualToken);
@@ -35,13 +35,13 @@ namespace UnitTests
         public void ShouldRestoreSelfSerializedToken()
         {
             //Arrange
-            var originToken = UploadToken.New();
+            var originToken = TransferToken.New();
             var tokenStr = originToken.Serialize(TestSecret, TimeSpan.FromSeconds(1));
 
             _output.WriteLine(tokenStr);
 
             //Act
-            var actualToken = UploadToken.VerifyAndDeserialize(tokenStr, TestSecret);
+            var actualToken = TransferToken.VerifyAndDeserialize(tokenStr, TestSecret);
 
             //Assert
             Assert.NotNull(actualToken);
@@ -52,7 +52,7 @@ namespace UnitTests
         public void ShouldGenerateNewFileId()
         {
             //Arrange
-            var token = UploadToken.New();
+            var token = TransferToken.New();
 
             //Act
 

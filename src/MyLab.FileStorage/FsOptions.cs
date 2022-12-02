@@ -15,6 +15,7 @@ namespace MyLab.FileStorage
         public long UploadChunkLimitKBytes { get; set; } = 512;
         public long DownloadChunkLimitKBytes { get; set; } = 512;
 
+        public long? StoredFileSizeLimitMBytes { get; set; }
         public void Validate()
         {
             if (Directory == null)
@@ -26,11 +27,11 @@ namespace MyLab.FileStorage
                 throw new Exception("TokenSecret is too short. It should be longer then 16 bytes");
 
             if (UploadTokenTtlSec <= 0)
-                throw new Exception("Wrong UploadTokenTtlSec value It should be greater then 0");
+                throw new Exception($"Wrong {nameof(UploadTokenTtlSec)} value It should be greater then 0");
             if (DownloadTokenTtlSec <= 0)
-                throw new Exception("Wrong UploadTokenTtlSec value It should be greater then 0");
+                throw new Exception($"Wrong {nameof(DownloadTokenTtlSec)} value It should be greater then 0");
             if (DocTokenTtlSec <= 0)
-                throw new Exception("Wrong UploadTokenTtlSec value It should be greater then 0");
+                throw new Exception($"Wrong {nameof(DocTokenTtlSec)} value It should be greater then 0");
 
         }
     }

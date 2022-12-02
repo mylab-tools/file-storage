@@ -26,8 +26,8 @@ paths:
             'application/application-json':
               schema:
                 $ref: '#/components/schemas/StoredFile'
-        '401':
-          description: Invalid token
+        '400':
+          description: Bad file id
         '404':
           description: File not found
           
@@ -41,6 +41,8 @@ paths:
       responses:
         '204':
           description: Successfully deleted or not found
+        '400':
+          description: Bad file id
   
   '/files/new':
       
@@ -136,13 +138,15 @@ paths:
       description: Download file content chank with download-token
       responses:
         '200':
-          description: requested data
+          description: File content
           content:
             'application/octet-stream':
               schema:
                 type: string
                 format: binary
               example: "[example binary string]"
+        '206':
+          description: Partial file content
         '401':
           description: Invalid token
         '404':
@@ -169,6 +173,8 @@ paths:
                 type: string
                 format: binary
               example: "[example binary string]"
+        '206':
+          description: Partial file content
         '404':
           description: File not found
         '416':
@@ -287,7 +293,7 @@ components:
       type: string
       description: Contains signed uploaded file info 'StoredFile'
       format: jwt
-      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWQiOiI3Y2U4OTljMDI0M2U0NzdkODgxNjE3NjMzNzlhZDZmZiIsImV4cCI6MTUxNjIzOTAyMiwiYmt0IjoiY2l0aXplbi1kb2NzIn0.Eq0hiGZyXU2UwUWbwZ9TwnCwlsH9RqBmk1h40IDXllk"
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmbWV0YSI6IntcImlkXCI6XCI4YTVmNTU1ZTFjNTY0MjYzYjRkNDRmNzZjMTg2M2ZkZFwiLFwiY3JlYXRlZFwiOm51bGwsXCJtZDVcIjpcImU4MDdmMWZjZjgyZDEzMmY5YmIwMThjYTY3MzhhMTlmXCIsXCJmaWxlbmFtZVwiOlwiZm9vXCIsXCJsYWJlbHNcIjpudWxsfSIsIm5iZiI6MTY2OTk3NzQ4NSwiZXhwIjoxNjY5OTgxMDg1LCJpYXQiOjE2Njk5Nzc0ODV9.8WWRLL8aKWf3GPZM39u8xEki9tVvXwq7-LqU59uWnkw"
       
     Range:
       type: string

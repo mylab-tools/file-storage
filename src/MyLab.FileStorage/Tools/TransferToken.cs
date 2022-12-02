@@ -4,23 +4,23 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace MyLab.FileStorage.Tools
 {
-    class UploadToken
+    class TransferToken
     {
         private const string FileIdClaim = "fid";
 
         public Guid FileId { get; }
 
-        public UploadToken(Guid fileId)
+        public TransferToken(Guid fileId)
         {
             FileId = fileId;
         }
 
-        public static UploadToken New()
+        public static TransferToken New()
         {
-            return new UploadToken(Guid.NewGuid());
+            return new TransferToken(Guid.NewGuid());
         }
 
-        public static UploadToken VerifyAndDeserialize(string tokenStr, string secret)
+        public static TransferToken VerifyAndDeserialize(string tokenStr, string secret)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
             
@@ -50,7 +50,7 @@ namespace MyLab.FileStorage.Tools
             if(!Guid.TryParse(fileIdField.Value, out var fileId))
                 throw new SecurityTokenValidationException($"The token contains {FileIdClaim} claim with wrong format");
 
-            return new UploadToken(fileId);
+            return new TransferToken(fileId);
 
         }
 

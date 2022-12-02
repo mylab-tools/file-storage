@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Tools;
+using MyLab.Log;
 using Newtonsoft.Json;
 
 namespace MyLab.FileStorage.Services;
@@ -34,6 +35,13 @@ class FileStorageOperator : IStorageOperator
         await fs.WriteAsync(data, 0, data.Length);
     }
 
+    public Stream OpenContentRead(Guid fileId)
+    {
+        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        
+        return new FileStream(filename, FileMode.Open);
+    }
+
     public async Task WriteMetadataAsync(Guid fileId, StoredFileMetadataDto metadata)
     {
         var metadataStr = JsonConvert.SerializeObject(metadata);
@@ -44,19 +52,22 @@ class FileStorageOperator : IStorageOperator
         await wrtr.WriteAsync(metadataStr);
     }
 
-    public async Task<StoredFileMetadataDto?> ReadMetadataAsync(Guid fileId)
+    public async Task<StoredFileMetadataDto> ReadMetadataAsync(Guid fileId)
     {
         var filename = _fileIdConverter.ToMetadataFile(fileId);
         
-        if (!File.Exists(filename)) return null;
-
         await using var strm = new FileStream(filename, FileMode.Open);
         using var rdr = new StreamReader(strm);
 
         var str = await rdr.ReadToEndAsync();
 
-        return JsonConvert.DeserializeObject<StoredFileMetadataDto>(str);
+        var dto = JsonConvert.DeserializeObject<StoredFileMetadataDto>(str);
 
+        if (dto == null)
+            throw new FormatException("Metadata file has from format")
+                .AndFactIs("file-id", fileId);
+
+        return dto;
     }
 
     public Task WriteHashCtxAsync(Guid fileId, Md5Ex.Md5Context context)
@@ -68,7 +79,7 @@ class FileStorageOperator : IStorageOperator
     public async Task<Md5Ex.Md5Context?> ReadHashCtxAsync(Guid fileId)
     {
         var filename = _fileIdConverter.ToMetadataFile(fileId);
-
+        
         if (!File.Exists(filename)) return null;
 
         var ctxBin = await File.ReadAllBytesAsync(filename);
@@ -97,5 +108,14 @@ class FileStorageOperator : IStorageOperator
         }
 
         return Task.CompletedTask;
+    }
+
+    public long GetContentLength(Guid fileId)
+    {
+        var filename = _fileIdConverter.ToMetadataFile(fileId);
+
+        var fi = new FileInfo(filename);
+        
+        return fi.Length;
     }
 }

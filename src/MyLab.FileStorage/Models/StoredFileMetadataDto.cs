@@ -24,7 +24,7 @@ namespace MyLab.FileStorage.Client.Models
         /// Creation date time
         /// </summary>
         [JsonProperty("created")]
-        private DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
 
         /// <summary>
         /// File MD5 check sum

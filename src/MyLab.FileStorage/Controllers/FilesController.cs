@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using MyLab.FileStorage.Services;
+using MyLab.WebErrors;
 
 namespace MyLab.FileStorage.Controllers
 {
@@ -15,15 +17,13 @@ namespace MyLab.FileStorage.Controllers
         }
 
         [HttpGet]
+        [ErrorToResponse(typeof(FileNotFoundException), HttpStatusCode.NotFound, "File not found")]
         public async Task<IActionResult> GetFile([FromRoute(Name = "file_id")] string fileId)
         {
             if (!Guid.TryParse(fileId, out var guidId))
                 return BadRequest("Bad file id");
 
             var fileMetadata = await _storageOperator.ReadMetadataAsync(guidId);
-
-            if (fileMetadata == null)
-                return NotFound("File not found");
 
             return Ok(fileMetadata);
         }

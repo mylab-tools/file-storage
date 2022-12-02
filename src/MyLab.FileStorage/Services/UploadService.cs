@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Buffers;
+using System.IO.Pipelines;
+using Microsoft.Extensions.Options;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Tools;
 using MyLab.Log;
@@ -18,13 +20,27 @@ class UploadService : IUploadService
 
     public string CreateUploadToken()
     {
-        var uploadToken = UploadToken.New();
+        var uploadToken = TransferToken.New();
 
         return uploadToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
     }
 
-    public async Task AppendFileData(Guid fileId, byte[] chunk)
+    public async Task AppendFileData(Guid fileId, PipeReader pipeReader, int length)
     {
+        if (length / 1024 > _options.UploadChunkLimitKBytes)
+            throw new DataTooLargeException();
+
+        if (_options.StoredFileSizeLimitMBytes.HasValue)
+        {
+            var existentFileLen = _operator.GetContentLength(fileId);
+
+            if ((existentFileLen + length) / (1024*1024) > _options.StoredFileSizeLimitMBytes.Value)
+                throw new FileTooLargeException()
+                    .AndFactIs("file-id", fileId);
+        }
+
+        var chunk = await ReadDataFromPipe(pipeReader, length);
+
         await _operator.TouchBaseDirectoryAsync(fileId);
 
         await _operator.AppendContentAsync(fileId, chunk);
@@ -57,9 +73,7 @@ class UploadService : IUploadService
             Id = fileId,
             Labels = completion.Labels
         };
-
-        await _operator.TouchBaseDirectoryAsync(fileId);
-
+        
         await _operator.WriteMetadataAsync(fileId, metadata);
 
         var docToken = new DocumentToken(metadata);
@@ -90,5 +104,19 @@ class UploadService : IUploadService
         }
 
         return success;
+    }
+
+    private async Task<byte[]> ReadDataFromPipe(PipeReader reader, int contentLength)
+    {
+        var readTimeout = TimeSpan.FromSeconds(30);
+        var cts = new CancellationTokenSource(readTimeout);
+        var readResult = await reader.ReadAtLeastAsync(contentLength, cts.Token);
+
+        if (readResult.Buffer.Length != contentLength)
+        {
+            throw new InvalidOperationException($"Cant read input stream in {readTimeout}");
+        }
+
+        return readResult.Buffer.ToArray();
     }
 }

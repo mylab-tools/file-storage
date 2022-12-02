@@ -9,6 +9,7 @@ builder.Services
     .AddControllers(opt => opt.AddExceptionProcessing())
     .AddNewtonsoftJson();
 builder.Services.AddSingleton<IUploadService, UploadService>();
+builder.Services.AddSingleton<IDownloadService, DownloadService>();
 builder.Services.AddSingleton<IStorageOperator, FileStorageOperator>();
 
 var app = builder.Build();
