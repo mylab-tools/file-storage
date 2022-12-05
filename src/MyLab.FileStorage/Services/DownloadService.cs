@@ -30,7 +30,7 @@ class DownloadService : IDownloadService
         // FileNotFoundException if file not found
         var fileLen = _storageOperator.GetContentLength(fileId);
 
-        if (rangeHeader.GetTotalLength(fileLen) / 1024 > _options.DownloadChunkLimitKBytes)
+        if (rangeHeader.GetTotalLength(fileLen) / 1024 > _options.DownloadChunkLimitKiB)
             throw new DataTooLargeException();
 
         var metadata = await GetMetadataAsync(fileId);
@@ -49,7 +49,7 @@ class DownloadService : IDownloadService
         // FileNotFoundException if file not found
         var fileLen = _storageOperator.GetContentLength(fileId);
 
-        if (fileLen / 1024 > _options.DownloadChunkLimitKBytes)
+        if (fileLen / 1024 > _options.DownloadChunkLimitKiB)
             throw new DataTooLargeException();
 
         var metadata = await GetMetadataAsync(fileId);

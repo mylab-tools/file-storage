@@ -44,14 +44,14 @@ class UploadService : IUploadService
 
     public async Task AppendFileData(Guid fileId, PipeReader pipeReader, int length)
     {
-        if (length / 1024 > _options.UploadChunkLimitKBytes)
+        if (length / 1024 > _options.UploadChunkLimitKiB)
             throw new DataTooLargeException();
 
-        if (_options.StoredFileSizeLimitMBytes.HasValue)
+        if (_options.StoredFileSizeLimitMiB.HasValue)
         {
             var existentFileLen = _operator.GetContentLength(fileId);
 
-            if ((existentFileLen + length) / (1024*1024) > _options.StoredFileSizeLimitMBytes.Value)
+            if ((existentFileLen + length) / (1024*1024) > _options.StoredFileSizeLimitMiB.Value)
                 throw new FileTooLargeException()
                     .AndFactIs("file-id", fileId);
         }
@@ -107,7 +107,7 @@ class UploadService : IUploadService
         return new NewFileDto
         {
             File = metadata,
-            Token = docToken.Serialize(_options.FileTokenSecret!, TimeSpan.FromSeconds(_options.DocTokenTtlSec))
+            Token = docToken.Serialize(_options.FileTokenSecret!, TimeSpan.FromSeconds(_options.FileTokenTtlSec))
         };
     }
 

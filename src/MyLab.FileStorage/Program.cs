@@ -1,3 +1,4 @@
+using MyLab.FileStorage;
 using MyLab.FileStorage.Services;
 using MyLab.WebErrors;
 
@@ -5,12 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services
+var srv = builder.Services;
+
+srv
     .AddControllers(opt => opt.AddExceptionProcessing())
     .AddNewtonsoftJson();
-builder.Services.AddSingleton<IUploadService, UploadService>();
-builder.Services.AddSingleton<IDownloadService, DownloadService>();
-builder.Services.AddSingleton<IStorageOperator, FileStorageOperator>();
+
+srv.AddSingleton<IUploadService, UploadService>()
+    .AddSingleton<IDownloadService, DownloadService>()
+    .AddSingleton<IStorageOperator, FileStorageOperator>()
+    .Configure<FsOptions>(builder.Configuration.GetSection("FS"));
 
 var app = builder.Build();
 
