@@ -22,7 +22,7 @@ class UploadService : IUploadService
     {
         var uploadToken = new TransferToken(fileId);
 
-        return uploadToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
+        return uploadToken.Serialize(_options.TransferTokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
     }
 
     public async Task<Guid> CreateNewFileAsync(NewFileRequestDto? newFileRequest)
@@ -107,7 +107,7 @@ class UploadService : IUploadService
         return new NewFileDto
         {
             File = metadata,
-            Token = docToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.DocTokenTtlSec))
+            Token = docToken.Serialize(_options.FileTokenSecret!, TimeSpan.FromSeconds(_options.DocTokenTtlSec))
         };
     }
 

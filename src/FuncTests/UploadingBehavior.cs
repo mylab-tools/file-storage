@@ -86,7 +86,7 @@ namespace FuncTests
             var uploadResult = await api.CompleteFileUploadingAsync(uploadToken, uploadCompletion);
             
             if(uploadResult.Token != null)
-                fileToken = FileToken.VerifyAndDeserialize(uploadResult.Token, TokenSecret);
+                fileToken = FileToken.VerifyAndDeserialize(uploadResult.Token, FileTokenSecret);
 
             //Assert
             Assert.NotNull(fileToken);
@@ -162,7 +162,7 @@ namespace FuncTests
             var uploadResult = await api.CompleteFileUploadingAsync(uploadToken, uploadCompletion);
 
             if (uploadResult.Token != null)
-                fileToken = FileToken.VerifyAndDeserialize(uploadResult.Token, TokenSecret);
+                fileToken = FileToken.VerifyAndDeserialize(uploadResult.Token, FileTokenSecret);
 
             //Assert
             Assert.NotNull(uploadResult);

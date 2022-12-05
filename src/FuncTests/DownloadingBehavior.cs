@@ -19,43 +19,40 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     private const string FileData = "foobarbaz";
     
     private readonly IFsDownloadApiV1 _api;
-    private readonly ITestOutputHelper _output;
 
-    private Stream _fileStream;
-    private Guid _fileId;
-    private readonly StoredFileMetadataDto _fileMetadata;
-    private readonly Mock<IStorageOperator> _storageOpMock;
+    private readonly Stream _fileStream;
+    private readonly Guid _fileId;
 
     public DownloadingBehavior(TestApi<Program, IFsDownloadApiV1> api, ITestOutputHelper output)
     {
         api.Output = output;
-        _output = output;
 
         var fileDataBin = Encoding.UTF8.GetBytes(FileData);
         _fileStream = new MemoryStream(fileDataBin);
         _fileId = Guid.NewGuid();
 
-        _fileMetadata = new StoredFileMetadataDto
+        var fileMetadata = new StoredFileMetadataDto
         {
             Filename = "foo.ext"
         };
 
-        _storageOpMock = new Mock<IStorageOperator>();
-        _storageOpMock.Setup(op => op.OpenContentRead(It.Is<Guid>(id => id == _fileId)))
+        var storageOpMock = new Mock<IStorageOperator>();
+        storageOpMock.Setup(op => op.OpenContentRead(It.Is<Guid>(id => id == _fileId)))
             .Returns(_fileStream);
-        _storageOpMock.Setup(op => op.ReadMetadataAsync(It.Is<Guid>(id => id == _fileId)))
-            .ReturnsAsync(_fileMetadata);
+        storageOpMock.Setup(op => op.ReadMetadataAsync(It.Is<Guid>(id => id == _fileId)))
+            .ReturnsAsync(fileMetadata);
 
         _api = api.StartWithProxy(srv => srv
-            .AddSingleton(_storageOpMock.Object)
+            .AddSingleton(storageOpMock.Object)
             .AddLogging(lb => lb
                 .ClearProviders()
                 .AddFilter(l => true)
-                .AddXUnit(_output)
+                .AddXUnit(output)
             )
             .Configure<FsOptions>(opt =>
             {
-                opt.TokenSecret = "1234567890123456";
+                opt.TransferTokenSecret = "1234567890123456";
+                opt.FileTokenSecret = "6543210987654321";
             })
         );
     }

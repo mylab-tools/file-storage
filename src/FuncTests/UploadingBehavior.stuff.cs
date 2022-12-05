@@ -10,7 +10,8 @@ namespace FuncTests;
 
 public partial class UploadingBehavior : IClassFixture<TestApi<Program, IFsUploadApiV1>>
 {
-    private const string TokenSecret = "1234567890123456";
+    private const string TransferTokenSecret = "1234567890123456";
+    private const string FileTokenSecret = "6543210987654321";
 
     private readonly TestApi<Program, IFsUploadApiV1> _api;
     private readonly ITestOutputHelper _output;
@@ -41,7 +42,8 @@ public partial class UploadingBehavior : IClassFixture<TestApi<Program, IFsUploa
             )
             .Configure<FsOptions>(opt =>
             {
-                opt.TokenSecret = TokenSecret;
+                opt.TransferTokenSecret = TransferTokenSecret;
+                opt.FileTokenSecret = FileTokenSecret;
             })
         );
     }

@@ -22,7 +22,7 @@ class DownloadService : IDownloadService
         _storageOperator.GetContentLength(fileId);
 
         return new TransferToken(fileId)
-            .Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.DownloadTokenTtlSec));
+            .Serialize(_options.TransferTokenSecret!, TimeSpan.FromSeconds(_options.DownloadTokenTtlSec));
     }
 
     public async Task<(RangeStreamReader.ReadRange[] FileReads, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId, RangeHeaderValue rangeHeader)

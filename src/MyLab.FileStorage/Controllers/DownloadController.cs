@@ -79,7 +79,7 @@ namespace MyLab.FileStorage.Controllers
         [ErrorToResponse(typeof(MultipleRangeNotSupportedException), HttpStatusCode.BadRequest, "Multiple range is not supported")]
         public async Task<IActionResult> DownloadFileByToken([FromQuery(Name = "token")] string downloadToken, [FromHeader(Name = "Range")] string? rangeHeader)
         {
-            var token = TransferToken.VerifyAndDeserialize(downloadToken, _options.TokenSecret!);
+            var token = TransferToken.VerifyAndDeserialize(downloadToken, _options.TransferTokenSecret!);
 
             RangeHeaderValue.TryParse(rangeHeader, out var rangeValue);
 

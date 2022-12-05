@@ -45,7 +45,7 @@ namespace MyLab.FileStorage.Controllers
             if (Request.ContentLength == 0)
                 return BadRequest("Request does not contains a data chunk");
             
-            var token = TransferToken.VerifyAndDeserialize(uploadToken, _options.TokenSecret!);
+            var token = TransferToken.VerifyAndDeserialize(uploadToken, _options.TransferTokenSecret!);
 
             await _uploadService.AppendFileData(token.FileId, Request.BodyReader, (int)Request.ContentLength.Value);
             
@@ -60,7 +60,7 @@ namespace MyLab.FileStorage.Controllers
         [ErrorToResponse(typeof(DirectoryNotFoundException), HttpStatusCode.NotFound, "File not found")]
         public async Task<IActionResult> CompleteUploading([FromHeader(Name = "X-UploadToken")] string uploadToken, [FromBody]UploadCompletionDto uploadCompletionDto)
         {
-            var token = TransferToken.VerifyAndDeserialize(uploadToken, _options.TokenSecret!);
+            var token = TransferToken.VerifyAndDeserialize(uploadToken, _options.TransferTokenSecret!);
 
             var newFile = await _uploadService.CompleteFileCreation(token.FileId, uploadCompletionDto);
 

@@ -6,7 +6,8 @@ namespace MyLab.FileStorage
     {
         public string Directory { get; set; } = "/var/fs/data";
 
-        public string? TokenSecret { get; set; }
+        public string? TransferTokenSecret { get; set; }
+        public string? FileTokenSecret { get; set; }
 
         public int UploadTokenTtlSec { get; set; } = 60 * 60;
         public int DownloadTokenTtlSec { get; set; } = 60 * 60;
@@ -21,10 +22,15 @@ namespace MyLab.FileStorage
             if (Directory == null)
                 throw new Exception("Directory is not specified");
 
-            if(TokenSecret == null)
-                throw new Exception("TokenSecret is not specified");
-            if (Encoding.UTF8.GetByteCount(TokenSecret) < 16)
-                throw new Exception("TokenSecret is too short. It should be longer then 16 bytes");
+            if (TransferTokenSecret == null)
+                throw new Exception($"{nameof(TransferTokenSecret)} is not specified");
+            if (Encoding.UTF8.GetByteCount(TransferTokenSecret) < 16)
+                throw new Exception($"{nameof(TransferTokenSecret)} is too short. It should be longer then 16 bytes");
+
+            if (FileTokenSecret == null)
+                throw new Exception($"{nameof(FileTokenSecret)} is not specified");
+            if (Encoding.UTF8.GetByteCount(FileTokenSecret) < 16)
+                throw new Exception($"{nameof(FileTokenSecret)} is too short. It should be longer then 16 bytes");
 
             if (UploadTokenTtlSec <= 0)
                 throw new Exception($"Wrong {nameof(UploadTokenTtlSec)} value It should be greater then 0");

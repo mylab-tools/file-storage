@@ -49,7 +49,7 @@ namespace FuncTests
                 )
                 .Configure<FsOptions>(opt =>
                 {
-                    opt.TokenSecret = "1234567890123456";
+                    opt.TransferTokenSecret = "1234567890123456";
                 })
             );
 
@@ -79,7 +79,7 @@ namespace FuncTests
                 )
                 .Configure<FsOptions>(opt =>
                 {
-                    opt.TokenSecret = "1234567890123456";
+                    opt.TransferTokenSecret = "1234567890123456";
                 })
             );
 
