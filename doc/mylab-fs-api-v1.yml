@@ -51,6 +51,11 @@ paths:
       - Upload
       summary: Create new upload
       description: Create new file upload and upload-token
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: '#/components/schemas/NewFileRequest'
       responses:
         '200':
           description: Upload token
@@ -214,6 +219,17 @@ components:
   
   schemas:
   
+    NewFileRequest:
+      type: object
+      description: Contains parameters for new file
+      properties:
+        purpose: 
+          type: string
+          description: Defines file purpose. May be used by target service.
+          example: mail-attachment
+        labels:
+          $ref: '#/components/schemas/FileLabels'
+  
     NewFile:
       type: object
       description: File creation result
@@ -235,6 +251,10 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/FileId'
+        purpose: 
+          type: string
+          description: Defines file purpose. Assigned by target service.
+          example: mail-attachment
         created:
           type: string
           format: date-time
@@ -246,12 +266,16 @@ components:
           description: File name
           example: doc.txt
         labels:
-          type: object
-          additionalProperties:
-            type: string
-          example:
-            owner: user@host.com
-            sign: b2xvbG8=
+          $ref: '#/components/schemas/FileLabels'
+    
+    FileLabels:
+      description: Contains domain specific key-value labels 
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        owner: user@host.com
+        sign: b2xvbG8=
     
     UploadCompletion:
       type: object
@@ -264,12 +288,7 @@ components:
           description: File name
           example: doc.txt
         labels:
-          type: object
-          additionalProperties:
-            type: string
-          example:
-            owner: user@host.com
-            sign: b2xvbG8=
+          $ref: '#/components/schemas/FileLabels'
     
     Md5Checksum:
       type: string 
