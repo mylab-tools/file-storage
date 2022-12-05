@@ -38,5 +38,17 @@ namespace MyLab.FileStorage.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("confirmation")]
+        [ErrorToResponse(typeof(FileNotFoundException), HttpStatusCode.NotFound, "File not found")]
+        public async Task<IActionResult> ConfirmFile([FromRoute(Name = "file_id")] string fileId)
+        {
+            if (!Guid.TryParse(fileId, out var guidId))
+                return BadRequest("Bad file id");
+
+            await _storageOperator.WriteConfirmedFile(guidId, DateTime.Now);
+
+            return NoContent();
+        }
     }
 }

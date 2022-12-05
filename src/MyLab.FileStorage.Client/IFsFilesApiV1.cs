@@ -24,4 +24,11 @@ public interface IFsFilesApiV1
     [Delete]
     [ExpectedCode(HttpStatusCode.NoContent)]
     Task DeleteFileAsync([Path("file_id")] Guid fileId);
+
+    /// <summary>
+    /// Confirm file after uploading
+    /// </summary>
+    [Post("confirmation")]
+    [ExpectedCode(HttpStatusCode.NoContent)]
+    Task ConfirmFileAsync([Path("file_id")] Guid fileId);
 }

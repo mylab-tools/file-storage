@@ -24,4 +24,8 @@ public interface IStorageOperator
     Task DeleteFile(Guid fileId);
 
     long GetContentLength(Guid fileId);
+
+    Task WriteConfirmedFile(Guid fileId, DateTime datetime);
+
+    bool IsConfirmedFileExists(Guid fileId);
 }

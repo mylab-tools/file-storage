@@ -18,8 +18,10 @@ class DownloadService : IDownloadService
     }
     public string CreateDownloadToken(Guid fileId)
     {
-        // FileNotFoundException if file not found
-        _storageOperator.GetContentLength(fileId);
+        // if file does not exists or is not confirmed
+        if (!_storageOperator.IsConfirmedFileExists(fileId))
+            throw new FileNotFoundException()
+                .AndFactIs("file-id", fileId);
 
         return new TransferToken(fileId)
             .Serialize(_options.TransferTokenSecret!, TimeSpan.FromSeconds(_options.DownloadTokenTtlSec));
@@ -27,7 +29,11 @@ class DownloadService : IDownloadService
 
     public async Task<(RangeStreamReader.ReadRange[] FileReads, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId, RangeHeaderValue rangeHeader)
     {
-        // FileNotFoundException if file not found
+        // if file does not exists or is not confirmed
+        if (!_storageOperator.IsConfirmedFileExists(fileId))
+            throw new FileNotFoundException()
+                .AndFactIs("file-id", fileId);
+
         var fileLen = _storageOperator.GetContentLength(fileId);
 
         if (rangeHeader.GetTotalLength(fileLen) / 1024 > _options.DownloadChunkLimitKiB)
@@ -46,7 +52,11 @@ class DownloadService : IDownloadService
 
     public async Task<(byte[] Content, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId)
     {
-        // FileNotFoundException if file not found
+        // if file does not exists or is not confirmed
+        if (!_storageOperator.IsConfirmedFileExists(fileId))
+            throw new FileNotFoundException()
+                .AndFactIs("file-id", fileId);
+
         var fileLen = _storageOperator.GetContentLength(fileId);
 
         if (fileLen / 1024 > _options.DownloadChunkLimitKiB)
@@ -63,7 +73,7 @@ class DownloadService : IDownloadService
         return (buff, metadata);
     }
 
-    private Stream? GetFileStream(Guid fileId)
+    private Stream GetFileStream(Guid fileId)
     {
         var fileStream = _storageOperator.OpenContentRead(fileId);
 

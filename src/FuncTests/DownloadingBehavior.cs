@@ -41,6 +41,8 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
             .Returns(_fileStream);
         storageOpMock.Setup(op => op.ReadMetadataAsync(It.Is<Guid>(id => id == _fileId)))
             .ReturnsAsync(fileMetadata);
+        storageOpMock.Setup(op => op.IsConfirmedFileExists(It.Is<Guid>(id => id == _fileId)))
+            .Returns(true);
 
         _api = api.StartWithProxy(srv => srv
             .AddSingleton(storageOpMock.Object)

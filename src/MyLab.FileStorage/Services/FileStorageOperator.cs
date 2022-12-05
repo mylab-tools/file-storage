@@ -118,4 +118,18 @@ class FileStorageOperator : IStorageOperator
         
         return fi.Length;
     }
+
+    public Task WriteConfirmedFile(Guid fileId, DateTime datetime)
+    {
+        var filename = _fileIdConverter.ToConfirmFile(fileId);
+
+        return File.WriteAllTextAsync(filename, datetime.ToString("u"));
+    }
+
+    public bool IsConfirmedFileExists(Guid fileId)
+    {
+        var filename = _fileIdConverter.ToConfirmFile(fileId);
+
+        return File.Exists(filename);
+    }
 }

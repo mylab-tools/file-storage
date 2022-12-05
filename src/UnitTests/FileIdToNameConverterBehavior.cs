@@ -38,10 +38,10 @@ public class FileIdToNameConverterBehavior
 
 
         //Act
-        var dir = _converter.ToContentFile(_fileId);
+        var fn = _converter.ToContentFile(_fileId);
 
         //Assert
-        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/content.bin", dir);
+        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/content.bin", fn);
     }
 
     [Fact]
@@ -51,10 +51,10 @@ public class FileIdToNameConverterBehavior
 
 
         //Act
-        var dir = _converter.ToMetadataFile(_fileId);
+        var fn = _converter.ToMetadataFile(_fileId);
 
         //Assert
-        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/metadata.json", dir);
+        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/metadata.json", fn);
     }
 
     [Fact]
@@ -64,9 +64,22 @@ public class FileIdToNameConverterBehavior
 
 
         //Act
-        var dir = _converter.ToHashCtxFile(_fileId);
+        var fn = _converter.ToHashCtxFile(_fileId);
 
         //Assert
-        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/hash-ctx.bin", dir);
+        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/hash-ctx.bin", fn);
+    }
+
+    [Fact]
+    public void ShouldProvideConfirmFilename()
+    {
+        //Arrange
+
+
+        //Act
+        var fn = _converter.ToConfirmFile(_fileId);
+
+        //Assert
+        Assert.Equal("/var/fs/data/afd6/7969/1989/4dc1/8348/726a/ce4b/d4f6/confirmed.dt", fn);
     }
 }

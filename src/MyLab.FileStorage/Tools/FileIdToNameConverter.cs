@@ -19,6 +19,7 @@
         public string ToContentFile(Guid fileId) => ToFile(fileId, "content.bin");
         public string ToMetadataFile(Guid fileId) => ToFile(fileId, "metadata.json");
         public string ToHashCtxFile(Guid fileId) => ToFile(fileId, "hash-ctx.bin");
+        public string ToConfirmFile(Guid fileId) => ToFile(fileId, "confirmed.dt");
 
         string ToFile(Guid fileId, string filename)
         {
