@@ -19,9 +19,10 @@
   <ItemGroup>
     <Compile Include="..\MyLab.FileStorage\Models\JsonConverters.cs" Link="Models\JsonConverters.cs" />
     <Compile Include="..\MyLab.FileStorage\Models\NewFileDto.cs" Link="Models\NewFileDto.cs" />
+    <Compile Include="..\MyLab.FileStorage\Models\NewFileRequestDto.cs" Link="Models\NewFileRequestDto.cs" />
     <Compile Include="..\MyLab.FileStorage\Models\StoredFileMetadataDto.cs" Link="Models\StoredFileMetadataDto.cs" />
     <Compile Include="..\MyLab.FileStorage\Models\UploadCompletionDto.cs" Link="Models\UploadCompletionDto.cs" />
-    <Compile Include="..\MyLab.FileStorage\Tools\DocumentToken.cs" Link="Tools\DocumentToken.cs" />
+    <Compile Include="..\MyLab.FileStorage\Tools\FileToken.cs" Link="Tools\FileToken.cs" />
   </ItemGroup>
 
   <ItemGroup>

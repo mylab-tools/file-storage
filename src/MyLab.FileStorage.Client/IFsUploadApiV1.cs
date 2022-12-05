@@ -15,7 +15,7 @@ public interface IFsUploadApiV1
     /// </summary>
     /// <returns>Upload token</returns>
     [Post]
-    Task<string> CreateNewFileAsync();
+    Task<string> CreateNewFileAsync([JsonContent] NewFileRequestDto request = null);
 
     /// <summary>
     /// Uploads next file chunk

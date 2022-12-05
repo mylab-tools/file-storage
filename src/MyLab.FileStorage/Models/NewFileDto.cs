@@ -7,7 +7,7 @@ namespace MyLab.FileStorage.Client.Models
 #endif
 {
     /// <summary>
-    /// Contains info for upload completion
+    /// Contains parameters for new file
     /// </summary>
     public class NewFileDto
     {
@@ -21,6 +21,6 @@ namespace MyLab.FileStorage.Client.Models
         /// File token 
         /// </summary>
         [JsonProperty("token")]
-        public string? Token{ get; set; }
+        public string? Token { get; set; }
     }
 }

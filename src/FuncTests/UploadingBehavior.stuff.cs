@@ -1,11 +1,17 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MyLab.ApiClient.Test;
+using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
+using MyLab.FileStorage.Services;
 using Xunit.Abstractions;
 
 namespace FuncTests;
 
 public partial class UploadingBehavior : IClassFixture<TestApi<Program, IFsUploadApiV1>>
 {
+    private const string TokenSecret = "1234567890123456";
+
     private readonly TestApi<Program, IFsUploadApiV1> _api;
     private readonly ITestOutputHelper _output;
 
@@ -23,4 +29,21 @@ public partial class UploadingBehavior : IClassFixture<TestApi<Program, IFsUploa
             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
             .ToArray();
     }
+
+    IFsUploadApiV1 StartApp(IStorageOperator storageOperator)
+    {
+        return _api.StartWithProxy(srv => srv
+            .AddSingleton(storageOperator)
+            .AddLogging(lb => lb
+                .ClearProviders()
+                .AddFilter(l => true)
+                .AddXUnit(_output)
+            )
+            .Configure<FsOptions>(opt =>
+            {
+                opt.TokenSecret = TokenSecret;
+            })
+        );
+    }
+
 }

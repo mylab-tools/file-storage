@@ -1,13 +1,11 @@
 using System.Net;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Moq;
 using MyLab.ApiClient;
-using MyLab.FileStorage;
-using MyLab.FileStorage.Client.Models;
+using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Services;
 using MyLab.FileStorage.Tools;
+using UploadCompletionDto = MyLab.FileStorage.Client.Models.UploadCompletionDto;
 
 namespace FuncTests
 {
@@ -33,18 +31,7 @@ namespace FuncTests
             var filedDataChunk1 = Encoding.UTF8.GetBytes(fileData.Substring(0, 5));
             var filedDataChunk2 = Encoding.UTF8.GetBytes(fileData.Substring(5, 5));
 
-            var api = _api.StartWithProxy(srv => srv
-                .AddSingleton(storageOpMock.Object)
-                .AddLogging(lb => lb
-                    .ClearProviders()
-                    .AddFilter(l => true)
-                    .AddXUnit(_output)
-                )
-                .Configure<FsOptions>(opt =>
-                {
-                    opt.TokenSecret = "1234567890123456";
-                })
-            );
+            var api = StartApp(storageOpMock.Object);
 
             var uploadToken = await api.CreateNewFileAsync();
 
@@ -54,6 +41,142 @@ namespace FuncTests
 
             //Assert
             Assert.Equal(fileData, resultFileContent.ToString());
+        }
+
+        [Fact]
+        public async Task ShouldCreateREsultWithMetadata()
+        {
+            //Arrange
+            var fileData = Encoding.UTF8.GetBytes("1234567890");
+
+            var md5 = new Md5Ex();
+            md5.AppendData(fileData);
+            var fileDataHash = md5.FinalHash();
+
+            Md5Ex.Md5Context? storedMd5Context = null;
+
+            var storageOpMock = new Mock<IStorageOperator>();
+            storageOpMock.Setup(s => s.WriteHashCtxAsync(It.IsAny<Guid>(), It.IsAny<Md5Ex.Md5Context>()))
+                .Callback<Guid, Md5Ex.Md5Context>((guid, context) => storedMd5Context = context);
+            storageOpMock.Setup(s => s.ReadHashCtxAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(() => storedMd5Context);
+            storageOpMock.Setup(s => s.GetContentLength(It.IsAny<Guid>()))
+                .Returns(() => fileData.Length);
+
+            var api = StartApp(storageOpMock.Object);
+
+            var uploadToken = await api.CreateNewFileAsync();
+
+            await api.UploadNextChunkAsync(uploadToken, fileData);
+
+            var uploadCompletion = new UploadCompletionDto
+            {
+                Filename = "foo.ext",
+                Labels = new Dictionary<string, string>
+                {
+                    { "foo", "bar"},
+                    { "baz", "qoz"}
+                },
+                Md5 = fileDataHash
+            };
+
+            FileToken? fileToken = null;
+
+            //Act
+            var uploadResult = await api.CompleteFileUploadingAsync(uploadToken, uploadCompletion);
+            
+            if(uploadResult.Token != null)
+                fileToken = FileToken.VerifyAndDeserialize(uploadResult.Token, TokenSecret);
+
+            //Assert
+            Assert.NotNull(fileToken);
+            Assert.NotNull(fileToken!.FileMetadata);
+            Assert.Equal(uploadCompletion.Filename, fileToken.FileMetadata!.Filename);
+            Assert.Equal(uploadCompletion.Md5, fileToken.FileMetadata!.Md5);
+            Assert.Equal(uploadCompletion.Labels, fileToken.FileMetadata!.Labels);
+            Assert.True(DateTime.Now - fileToken.FileMetadata!.Created < TimeSpan.FromSeconds(10));
+            Assert.Equal(fileData.Length, fileToken.FileMetadata!.Length);
+
+            Assert.NotNull(uploadResult.File);
+            Assert.Equal(uploadCompletion.Filename, uploadResult.File!.Filename);
+            Assert.Equal(uploadCompletion.Md5, uploadResult.File!.Md5);
+            Assert.Equal(uploadCompletion.Labels, uploadResult.File!.Labels);
+            Assert.True(DateTime.Now - uploadResult.File!.Created < TimeSpan.FromSeconds(10));
+            Assert.Equal(fileData.Length, uploadResult.File!.Length);
+        }
+
+        [Fact]
+        public async Task ShouldStoreInitialParameters()
+        {
+            //Arrange
+            var fileData = Encoding.UTF8.GetBytes("1234567890");
+
+            var md5 = new Md5Ex();
+            md5.AppendData(fileData);
+            var fileDataHash = md5.FinalHash();
+
+            Md5Ex.Md5Context? storedMd5Context = null;
+            StoredFileMetadataDto? storedFileMetadata = null;
+
+            var storageOpMock = new Mock<IStorageOperator>();
+            storageOpMock.Setup(s => s.WriteHashCtxAsync(It.IsAny<Guid>(), It.IsAny<Md5Ex.Md5Context>()))
+                .Callback<Guid, Md5Ex.Md5Context>((guid, context) => storedMd5Context = context);
+            storageOpMock.Setup(s => s.ReadHashCtxAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(() => storedMd5Context);
+            storageOpMock.Setup(s => s.GetContentLength(It.IsAny<Guid>()))
+                .Returns(() => fileData.Length);
+            storageOpMock.Setup(s => s.WriteMetadataAsync(It.IsAny<Guid>(), It.IsAny<StoredFileMetadataDto>()))
+                .Callback<Guid, StoredFileMetadataDto>((id, metadata) => storedFileMetadata = metadata);
+            storageOpMock.Setup(s => s.ReadMetadataAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(() => storedFileMetadata);
+
+            var api = StartApp(storageOpMock.Object);
+
+            var uploadCompletion = new UploadCompletionDto
+            {
+                Filename = "foo.ext",
+                Labels = new Dictionary<string, string>
+                {
+                    { "foo", "bar"},
+                    { "baz", "qoz"}
+                },
+                Md5 = fileDataHash
+            };
+
+            var newFileRequest = new MyLab.FileStorage.Client.Models.NewFileRequestDto
+            {
+                Purpose = "foo-purpose",
+                Labels = new Dictionary<string, string>
+                {
+                    { "baz", "quz" }
+                }
+            };
+
+            FileToken? fileToken = null;
+
+            //Act
+            var uploadToken = await api.CreateNewFileAsync(newFileRequest);
+
+            await api.UploadNextChunkAsync(uploadToken, fileData);
+
+            var uploadResult = await api.CompleteFileUploadingAsync(uploadToken, uploadCompletion);
+
+            if (uploadResult.Token != null)
+                fileToken = FileToken.VerifyAndDeserialize(uploadResult.Token, TokenSecret);
+
+            //Assert
+            Assert.NotNull(uploadResult);
+            Assert.NotNull(uploadResult.File);
+            Assert.NotNull(uploadResult.File!.Labels);
+            Assert.NotNull(fileToken);
+
+            Assert.Equal("foo-purpose", uploadResult.File!.Purpose);
+            Assert.Equal("foo-purpose", fileToken!.FileMetadata!.Purpose);
+
+            Assert.True(uploadResult.File.Labels!.TryGetValue("baz", out var newDtoLbl));
+            Assert.Equal("quz", newDtoLbl);
+            Assert.True(fileToken.FileMetadata.Labels!.TryGetValue("baz", out var newTokenLbl));
+            Assert.Equal("quz", newTokenLbl);
         }
 
         [Theory]
@@ -72,20 +195,9 @@ namespace FuncTests
             var storageOpMock = new Mock<IStorageOperator>();
             storageOpMock
                 .Setup(s => s.ReadHashCtxAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(fileMd5Ctx);
+                .ReturnsAsync(fileMd5Ctx);  
 
-            var api = _api.StartWithProxy(srv => srv
-                .AddSingleton(storageOpMock.Object)
-                .AddLogging(lb => lb
-                    .ClearProviders()
-                    .AddFilter(l => true)
-                    .AddXUnit(_output)
-                )
-                .Configure<FsOptions>(opt =>
-                {
-                    opt.TokenSecret = "1234567890123456";
-                })
-            );
+            var api = StartApp(storageOpMock.Object);
 
             var uploadToken = await api.CreateNewFileAsync();
 
@@ -145,19 +257,8 @@ namespace FuncTests
             storageOpMock
                 .Setup(s => s.ReadHashCtxAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(() => fileMd5Ctx);
-            
-            var api = _api.StartWithProxy(srv => srv
-                .AddSingleton(storageOpMock.Object)
-                .AddLogging(lb => lb
-                    .ClearProviders()
-                    .AddFilter(l => true)
-                    .AddXUnit(_output)
-                )
-                .Configure<FsOptions>(opt =>
-                {
-                    opt.TokenSecret = "1234567890123456";
-                })
-            );
+
+            var api = StartApp(storageOpMock.Object);
 
             var uploadToken = await api.CreateNewFileAsync();
 

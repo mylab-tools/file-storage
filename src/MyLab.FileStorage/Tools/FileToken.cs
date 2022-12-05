@@ -20,7 +20,7 @@ namespace MyLab.FileStorage.Client.Tools
     /// <summary>
     /// Represent document token
     /// </summary>
-    public class DocumentToken
+    public class FileToken
     {
         private const string FileMetadataClaim = "fmeta";
 
@@ -30,9 +30,9 @@ namespace MyLab.FileStorage.Client.Tools
         public StoredFileMetadataDto? FileMetadata { get; }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="DocumentToken"/>
+        /// Initializes a new instance of <see cref="FileToken"/>
         /// </summary>
-        public DocumentToken(StoredFileMetadataDto fileMetadata)
+        public FileToken(StoredFileMetadataDto fileMetadata)
         {
             FileMetadata = fileMetadata;
         }
@@ -40,7 +40,7 @@ namespace MyLab.FileStorage.Client.Tools
         /// <summary>
         /// Verify sign and deserialize an object
         /// </summary>
-        public static DocumentToken VerifyAndDeserialize(string tokenStr, string secret)
+        public static FileToken VerifyAndDeserialize(string tokenStr, string secret)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
@@ -78,7 +78,7 @@ namespace MyLab.FileStorage.Client.Tools
             if(fileMetadataDto == null)
                 throw new SecurityTokenValidationException($"The claim {FileMetadataClaim} has wrong format");
 
-            return new DocumentToken(fileMetadataDto);
+            return new FileToken(fileMetadataDto);
 
         }
 

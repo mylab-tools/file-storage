@@ -18,11 +18,28 @@ class UploadService : IUploadService
         _options = options.Value;
     }
 
-    public string CreateUploadToken()
+    public string CreateUploadToken(Guid fileId)
     {
-        var uploadToken = TransferToken.New();
+        var uploadToken = new TransferToken(fileId);
 
         return uploadToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
+    }
+
+    public async Task<Guid> CreateNewFileAsync(NewFileRequestDto? newFileRequest)
+    {
+        Guid fileId = Guid.NewGuid();
+        var metadata = new StoredFileMetadataDto
+        {
+            Id = fileId,
+            Created = DateTime.Now,
+            Labels = newFileRequest?.Labels,
+            Purpose = newFileRequest?.Purpose
+        };
+
+        await _operator.TouchBaseDirectoryAsync(fileId);
+        await _operator.WriteMetadataAsync(fileId, metadata);
+
+        return fileId;
     }
 
     public async Task AppendFileData(Guid fileId, PipeReader pipeReader, int length)
@@ -66,23 +83,53 @@ class UploadService : IUploadService
         if (!fileHashOk)
             throw new BadChecksumException();
 
+        var length = _operator.GetContentLength(fileId);
+
+        var initialMetadata = await _operator.ReadMetadataAsync(fileId);
+        
         var metadata = new StoredFileMetadataDto
         {
+            Id = fileId,
             Md5 = completion.Md5,
             Filename = completion.Filename,
-            Id = fileId,
-            Labels = completion.Labels
+            Labels = JoinLabels(initialMetadata?.Labels, completion.Labels),
+            Length = length,
+            Created = initialMetadata != null
+                ? initialMetadata.Created
+                : DateTime.Now,
+            Purpose = initialMetadata?.Purpose
         };
         
         await _operator.WriteMetadataAsync(fileId, metadata);
 
-        var docToken = new DocumentToken(metadata);
+        var docToken = new FileToken(metadata);
 
         return new NewFileDto
         {
             File = metadata,
             Token = docToken.Serialize(_options.TokenSecret!, TimeSpan.FromSeconds(_options.DocTokenTtlSec))
         };
+    }
+
+    private Dictionary<string, string>? JoinLabels(Dictionary<string, string>? initialMetadataLabels, Dictionary<string, string>? completionLabels)
+    {
+        if(initialMetadataLabels == null && completionLabels == null) 
+            return null;
+
+        var newDict = completionLabels != null 
+            ? new Dictionary<string, string>(completionLabels)
+            : new Dictionary<string, string>();
+
+        if (initialMetadataLabels != null)
+        {
+            foreach (var label in initialMetadataLabels)
+            {
+                if (newDict.ContainsKey(label.Key))
+                    newDict[label.Key] = label.Value;
+            }
+        }
+
+        return newDict;
     }
 
     async Task<bool> CheckAndDeleteMd5Async(Guid fileId, byte[] controlMd5)

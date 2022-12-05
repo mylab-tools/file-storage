@@ -21,6 +21,12 @@ namespace MyLab.FileStorage.Client.Models
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Defines file purpose. Assigned by target service.
+        /// </summary>
+        [JsonProperty("purpose")]
+        public string? Purpose { get; set; }
+
+        /// <summary>
         /// Creation date time
         /// </summary>
         [JsonProperty("created")]
@@ -36,11 +42,19 @@ namespace MyLab.FileStorage.Client.Models
         /// <summary>
         /// File name
         /// </summary>
-        [JsonProperty("filename")] public string? Filename { get; set; }
+        [JsonProperty("filename")] 
+        public string? Filename { get; set; }
+
+        /// <summary>
+        /// File length
+        /// </summary>
+        [JsonProperty("length")] 
+        public long Length{ get; set; }
 
         /// <summary>
         /// Key-value labels
         /// </summary>
-        [JsonProperty("labels")] public Dictionary<string, string>? Labels { get; set; }
+        [JsonProperty("labels")] 
+        public Dictionary<string, string>? Labels { get; set; }
     }
 }

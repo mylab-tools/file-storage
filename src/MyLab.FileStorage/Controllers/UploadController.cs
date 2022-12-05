@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyLab.FileStorage.Models;
@@ -24,9 +25,13 @@ namespace MyLab.FileStorage.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateNewUploading()
+        public async Task<IActionResult> CreateNewUploading([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]NewFileRequestDto? newFileRequest)
         {
-            return Ok(_uploadService.CreateUploadToken());
+            var newFileId = await _uploadService.CreateNewFileAsync(newFileRequest);
+
+            var uploadToken = _uploadService.CreateUploadToken(newFileId);
+
+            return Ok(uploadToken);
         }
 
         [HttpPost("next-chunk")]

@@ -52,7 +52,7 @@ class FileStorageOperator : IStorageOperator
         await wrtr.WriteAsync(metadataStr);
     }
 
-    public async Task<StoredFileMetadataDto> ReadMetadataAsync(Guid fileId)
+    public async Task<StoredFileMetadataDto?> ReadMetadataAsync(Guid fileId)
     {
         var filename = _fileIdConverter.ToMetadataFile(fileId);
         
