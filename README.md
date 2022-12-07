@@ -140,7 +140,7 @@ Docker образ `Clenaer`: [![Docker image](https://img.shields.io/static/v1?l
 
 Узел в конфигурации - `FS`. Ниже приведён пример конфигурации через переменные окружения:
 
-```json
+```
 FS__TransferTokenSecret=1234567890123456
 FS__FileTokenSecret=6543210987654321
 ```
