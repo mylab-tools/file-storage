@@ -4,6 +4,14 @@
 
 Ознакомьтесь с последними изменениями в [журнале изменений](/CHANGELOG.md).
 
+Docker образ `API`: [![Docker image](https://img.shields.io/static/v1?label=docker&style=flat&logo=docker&message=image&color=blue)](https://github.com/orgs/mylab-tools/packages/container/package/fs-api)
+
+Docker образ `Clenaer`: [![Docker image](https://img.shields.io/static/v1?label=docker&style=flat&logo=docker&message=image&color=blue)](https://github.com/orgs/mylab-tools/packages/container/package/fs-cleaner)
+
+Спецификация `API` : [![API specification](https://img.shields.io/badge/OAS3-v1%20-green)](https://app.swaggerhub.com/apis/ozzy/MyLab.FileStorage/1)
+
+Клиент: [![NuGet](https://img.shields.io/nuget/v/MyLab.FileStorage.Client.svg)](https://www.nuget.org/packages/MyLab.FileStorage.Client/)
+
 ## Обзор 
 
 `MyLab.FS` (далее *файловое хранилище*) - сервис, предназначенный для обеспечения функций хранения в информационной системе с авторизованным доступом клиентов.
@@ -186,5 +194,36 @@ POST /processing
 Cleaner__Directory=/var/fs/data
 Cleaner__LostFileTtlHours=1
 Cleaner__StoredFileTtlHours=12
+```
+
+## Развёртывание
+
+В данном разделе рассмотрено развёртывание с использованием `docker` контейнеров.
+
+Ниже приведён пример `docker-compose.yml` для развёртывания *файлового хранилища*:
+
+```yaml
+version: '3.2'
+
+services:
+  mylab-fs-api:
+    container_name: mylab-fs-api
+    image: ghcr.io/mylab-tools/fs-api:latest
+    volumes:
+    - fs_data: /var/fs/data
+    environment:
+    - FS__TransferTokenSecret=1234567890123456
+    - FS__FileTokenSecret=6543210987654321
+    
+  mylab-fs-cleaner:
+    container_name: mylab-fs-cleaner
+    image: ghcr.io/mylab-tools/fs-cleaner:latest
+    volumes:
+    - fs_data: /var/fs/data
+    environment:
+    - Cleaner__LostFileTtlHours=1
+    
+volumes:
+  fs_data:
 ```
 
