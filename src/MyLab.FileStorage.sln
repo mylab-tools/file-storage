@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.FileStorage", "MyLab.FileStorage\MyLab.FileStorage.csproj", "{04E0EBC6-22D9-49CE-A97E-9EEB52417421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.FileStorage", "MyLab.FileStorage\MyLab.FileStorage.csproj", "{04E0EBC6-22D9-49CE-A97E-9EEB52417421}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E1F15AC5-244B-4894-A479-034025842F9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuncTests", "FuncTests\FuncTests.csproj", "{D2600A4D-1F74-4312-B473-6BDAFC48011B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.FileStorage.Client", "MyLab.FileStorage.Client\MyLab.FileStorage.Client.csproj", "{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.FileStorage.Cleaner", "MyLab.FileStorage.Cleaner\MyLab.FileStorage.Cleaner.csproj", "{426DE960-F7CC-4B46-975A-39FB82A1C362}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Cleaner", "UnitTests.Cleaner\UnitTests.Cleaner.csproj", "{9245CF35-33E8-455A-BC2F-2950EE2CC565}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +25,26 @@ Global
 		{04E0EBC6-22D9-49CE-A97E-9EEB52417421}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04E0EBC6-22D9-49CE-A97E-9EEB52417421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04E0EBC6-22D9-49CE-A97E-9EEB52417421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1F15AC5-244B-4894-A479-034025842F9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1F15AC5-244B-4894-A479-034025842F9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1F15AC5-244B-4894-A479-034025842F9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1F15AC5-244B-4894-A479-034025842F9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2600A4D-1F74-4312-B473-6BDAFC48011B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2600A4D-1F74-4312-B473-6BDAFC48011B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2600A4D-1F74-4312-B473-6BDAFC48011B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2600A4D-1F74-4312-B473-6BDAFC48011B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426DE960-F7CC-4B46-975A-39FB82A1C362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426DE960-F7CC-4B46-975A-39FB82A1C362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426DE960-F7CC-4B46-975A-39FB82A1C362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426DE960-F7CC-4B46-975A-39FB82A1C362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
