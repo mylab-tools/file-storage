@@ -14,7 +14,7 @@ WORKDIR ./${PROJ}
 RUN dotnet publish -c release -o /app --no-restore
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 ARG PROJ
 ENV PROJ_FILE=$PROJ
 WORKDIR /app
