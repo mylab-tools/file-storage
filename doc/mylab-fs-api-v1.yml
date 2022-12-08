@@ -282,6 +282,10 @@ components:
           type: string
           description: File name
           example: doc.txt
+        length:
+          type: string
+          description: File length
+          example: 123
         labels:
           $ref: '#/components/schemas/FileLabels'
     
