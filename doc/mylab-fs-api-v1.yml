@@ -43,6 +43,23 @@ paths:
           description: Successfully deleted or not found
         '400':
           description: Bad file id
+          
+  '/files/{file_id}/confirmation':
+  
+    post:
+      tags:
+      - Files
+      summary: Confirm file
+      description: Confirm file after uploading
+      parameters:
+      - $ref: '#/components/parameters/FileId'
+      responses:
+        '204':
+          description: Confirmed successfully
+        '400':
+          description: Bad file id
+        '404':
+          description: File not found
   
   '/files/new':
       
