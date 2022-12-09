@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
+using MyLab.ApiClient;
 using MyLab.ApiClient.Test;
 using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
@@ -88,6 +89,32 @@ namespace FuncTests
 
             //Assert
             storageOpMock.Verify(op => op.DeleteFile(fileId));
+        }
+
+        [Fact]
+        public void ShouldValidContract()
+        {
+            //Arrange
+            var apiContractValidator = new ApiContractValidator()
+            {
+                ContractKeyMustBeSpecified = true
+            };
+
+            //Act & Assert
+            var validationResult = apiContractValidator.Validate(typeof(IFsFilesApiV1));
+
+            if (!validationResult.Success)
+            {
+                _output.WriteLine("Errors:");
+
+                for (int i = 0; i < validationResult.Count; i++)
+                {
+                    _output.WriteLine($"{i + 1}. {validationResult[i].Reason}");
+                }
+            }
+
+            //Assert
+            Assert.True(validationResult.Success);
         }
     }
 }

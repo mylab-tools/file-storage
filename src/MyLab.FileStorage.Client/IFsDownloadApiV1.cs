@@ -9,7 +9,7 @@ namespace MyLab.FileStorage.Client;
 /// <summary>
 /// Represents DownloadByFileId API contract
 /// </summary>
-[Api("v1/files")]
+[Api("v1/files", Key = "fs-download")]
 public interface IFsDownloadApiV1
 {
     /// <summary>
