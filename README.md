@@ -233,6 +233,6 @@ volumes:
 
 Контракты разработаны с использованием [MyLab.ApiClient](https://github.com/mylab-tools/apiclient):
 
-* [`IFsFilesApiV1`](./src/MyLAb.FileStorage.Client/IFsFilesApiV1.cs) - API доступа к фалам. Ключ конфигурации `fs-files`;
-* [`IFsDownloadApiV1`](./src/MyLAb.FileStorage.Client/IFsDownloadApiV1.cs) - API Скачивания. Ключ конфигурации `fs-download`;
-* [`IFsUploadApiV1`](./src/MyLAb.FileStorage.Client/IFsUploadApiV1.cs) - API Загрузки. Ключ конфигурации `fs-upload`.
+* [`IFsFilesApiV1`](./src/MyLab.FileStorage.Client/IFsFilesApiV1.cs) - API доступа к фалам. Ключ конфигурации `fs-files`;
+* [`IFsDownloadApiV1`](./src/MyLab.FileStorage.Client/IFsDownloadApiV1.cs) - API Скачивания. Ключ конфигурации `fs-download`;
+* [`IFsUploadApiV1`](./src/MyLab.FileStorage.Client/IFsUploadApiV1.cs) - API Загрузки. Ключ конфигурации `fs-upload`.
