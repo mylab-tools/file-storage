@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Andrey O.</Authors>
     <Copyright>Copyright (c) 2022 Andrey Osintsev &lt;ozzy.ext@gmail.com&gt;</Copyright>
     <PackageProjectUrl>https://github.com/mylab-tools/file-storage</PackageProjectUrl>
@@ -11,8 +11,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>tools.png</PackageIcon>
-    <AssemblyVersion>1.0.0.2911</AssemblyVersion>
-    <FileVersion>1.0.0.2911</FileVersion>
+    <AssemblyVersion>1.0.1.0912</AssemblyVersion>
+    <FileVersion>1.0.1.0912</FileVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 

@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.FileStorage.Cleaner",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Cleaner", "UnitTests.Cleaner\UnitTests.Cleaner.csproj", "{9245CF35-33E8-455A-BC2F-2950EE2CC565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuncTests.Cleaner", "FuncTests.Cleaner\FuncTests.Cleaner.csproj", "{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FuncTests.Cleaner", "FuncTests.Cleaner\FuncTests.Cleaner.csproj", "{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{2EDE4657-0757-483D-9AF7-07108EE0878D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,7 +45,7 @@ namespace FuncTests
         }
 
         [Fact]
-        public async Task ShouldCreateREsultWithMetadata()
+        public async Task ShouldCreateResultWithMetadata()
         {
             //Arrange
             var fileData = Encoding.UTF8.GetBytes("1234567890");

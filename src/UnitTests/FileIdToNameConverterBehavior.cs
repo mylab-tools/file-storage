@@ -13,7 +13,7 @@ public class FileIdToNameConverterBehavior
     {
         _converter = new FileIdToNameConverter(BasePath)
         {
-            PathSeparator = '/'
+            Separator = '/'
         };
         _fileId = Guid.Parse("afd6796919894dc18348726ace4bd4f6");
     }
