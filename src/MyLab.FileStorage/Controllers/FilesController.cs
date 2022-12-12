@@ -23,6 +23,10 @@ namespace MyLab.FileStorage.Controllers
             if (!Guid.TryParse(fileId, out var guidId))
                 return BadRequest("Bad file id");
 
+            bool hasConfirmation = _storageOperator.IsConfirmedFileExists(guidId);
+            if (!hasConfirmation)
+                throw new FileNotFoundException("Confirmation not found");
+
             var fileMetadata = await _storageOperator.ReadMetadataAsync(guidId);
 
             return Ok(fileMetadata);
@@ -41,10 +45,15 @@ namespace MyLab.FileStorage.Controllers
 
         [HttpPost("confirmation")]
         [ErrorToResponse(typeof(FileNotFoundException), HttpStatusCode.NotFound, "File not found")]
+        [ErrorToResponse(typeof(ConflictException), HttpStatusCode.Conflict, "Conflict")]
         public async Task<IActionResult> ConfirmFile([FromRoute(Name = "file_id")] string fileId)
         {
             if (!Guid.TryParse(fileId, out var guidId))
                 return BadRequest("Bad file id");
+
+            bool hasConfirmation = _storageOperator.IsConfirmedFileExists(guidId);
+            if (hasConfirmation)
+                throw new ConflictException("Confirmation already exists");
 
             await _storageOperator.WriteConfirmedFile(guidId, DateTime.Now);
 

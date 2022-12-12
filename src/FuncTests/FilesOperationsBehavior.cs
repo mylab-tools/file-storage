@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -40,6 +41,8 @@ namespace FuncTests
                         Filename = "foo"
                     }
                 ));
+            storageOpMock.Setup(s => s.IsConfirmedFileExists(It.IsAny<Guid>()))
+                .Returns(true);
 
             var api = _api.StartWithProxy(srv => srv
                 .AddSingleton(storageOpMock.Object)
@@ -61,6 +64,104 @@ namespace FuncTests
             Assert.NotNull(file);
             Assert.Equal(fileId, file.Id);
             Assert.Equal("foo", file.Filename);
+        }
+
+        [Fact]
+        public async Task ShouldNotProvideFileWhenUnconfirmed()
+        {
+            //Arrange
+            var fileId = Guid.NewGuid();
+
+            var storageOpMock = new Mock<IStorageOperator>();
+            storageOpMock
+                .Setup(s => s.ReadMetadataAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((Func<Guid, StoredFileMetadataDto>)(id =>
+                        new StoredFileMetadataDto
+                        {
+                            Id = id,
+                            Filename = "foo"
+                        }
+                    ));
+            storageOpMock.Setup(s => s.IsConfirmedFileExists(It.IsAny<Guid>()))
+                .Returns(false);
+
+            var api = _api.StartWithProxy(srv => srv
+                .AddSingleton(storageOpMock.Object)
+                .AddLogging(lb => lb
+                    .ClearProviders()
+                    .AddFilter(l => true)
+                    .AddXUnit(_output)
+                )
+                .Configure<FsOptions>(opt =>
+                {
+                    opt.TransferTokenSecret = "1234567890123456";
+                })
+            );
+
+            ResponseCodeException? resultException = null;
+
+            //Act
+            try
+            {
+                await api.GetFileMetadataAsync(fileId);
+            }
+            catch (ResponseCodeException e)
+            {
+                resultException = e;
+            }
+
+            //Assert
+            Assert.NotNull(resultException);
+            Assert.Equal(HttpStatusCode.NotFound, resultException!.StatusCode);
+        }
+
+        [Fact]
+        public async Task ShouldConflictWhenUnconfirmed()
+        {
+            //Arrange
+            var fileId = Guid.NewGuid();
+
+            var storageOpMock = new Mock<IStorageOperator>();
+            storageOpMock
+                .Setup(s => s.ReadMetadataAsync(It.IsAny<Guid>()))
+                .ReturnsAsync((Func<Guid, StoredFileMetadataDto>)(id =>
+                        new StoredFileMetadataDto
+                        {
+                            Id = id,
+                            Filename = "foo"
+                        }
+                    ));
+            storageOpMock.Setup(s => s.IsConfirmedFileExists(It.IsAny<Guid>()))
+                .Returns(true);
+
+            var api = _api.StartWithProxy(srv => srv
+                .AddSingleton(storageOpMock.Object)
+                .AddLogging(lb => lb
+                    .ClearProviders()
+                    .AddFilter(l => true)
+                    .AddXUnit(_output)
+                )
+                .Configure<FsOptions>(opt =>
+                {
+                    opt.TransferTokenSecret = "1234567890123456";
+                })
+            );
+
+            ResponseCodeException? resultException = null;
+
+            //Act
+            try
+            {
+                await api.GetFileMetadataAsync(fileId);
+            }
+            catch (ResponseCodeException e)
+            {
+                resultException = e;
+            }
+
+            //Assert
+            Assert.NotNull(resultException);
+            Assert.Equal(HttpStatusCode.Conflict, resultException!.StatusCode);
         }
 
         [Fact]
