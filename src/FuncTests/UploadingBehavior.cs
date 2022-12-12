@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using Moq;
 using MyLab.ApiClient;
+using MyLab.FileStorage.Client;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Services;
 using MyLab.FileStorage.Tools;
@@ -44,7 +45,7 @@ namespace FuncTests
         }
 
         [Fact]
-        public async Task ShouldCreateREsultWithMetadata()
+        public async Task ShouldCreateResultWithMetadata()
         {
             //Arrange
             var fileData = Encoding.UTF8.GetBytes("1234567890");
@@ -285,6 +286,32 @@ namespace FuncTests
                 dto.Md5 != null &&
                 dto.Md5.SequenceEqual(fileDataHashBin)
                 )));
+        }
+
+        [Fact]
+        public void ShouldValidContract()
+        {
+            //Arrange
+            var apiContractValidator = new ApiContractValidator()
+            {
+                ContractKeyMustBeSpecified = true
+            };
+
+            //Act & Assert
+            var validationResult = apiContractValidator.Validate(typeof(IFsUploadApiV1));
+
+            if (!validationResult.Success)
+            {
+                _output.WriteLine("Errors:");
+
+                for (int i = 0; i < validationResult.Count; i++)
+                {
+                    _output.WriteLine($"{i + 1}. {validationResult[i].Reason}");
+                }
+            }
+
+            //Assert
+            Assert.True(validationResult.Success);
         }
     }
 }

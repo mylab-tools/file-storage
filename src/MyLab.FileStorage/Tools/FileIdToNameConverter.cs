@@ -9,7 +9,7 @@
         public const string HashCtxFilename = "hash-ctx.bin";
         public const string ConfirmedFilename = "confirmed.dt";
 
-        public char PathSeparator { get; set; } = Path.PathSeparator;
+        public char Separator { get; set; } = Path.DirectorySeparatorChar;
 
         public FileIdToNameConverter(string basePath)
         {
@@ -18,7 +18,7 @@
 
         public string ToDirectory(Guid fileId)
         {
-            return _basePath.TrimEnd(PathSeparator) + PathSeparator + GuidToPath(fileId);
+            return _basePath.TrimEnd(Separator) + Separator + GuidToPath(fileId);
         }
 
         public Guid GetIdFromDirectory(string directory)
@@ -35,13 +35,13 @@
 
         string ToFile(Guid fileId, string filename)
         {
-            return ToDirectory(fileId) + PathSeparator + filename;
+            return ToDirectory(fileId) + Separator + filename;
         }
 
         string GuidToPath(Guid id)
         {
             var guidStr = id.ToString("N");
-            return String.Join(PathSeparator,
+            return String.Join(Separator,
                 guidStr.Substring(0, 4),
                 guidStr.Substring(4, 4),
                 guidStr.Substring(8, 24)

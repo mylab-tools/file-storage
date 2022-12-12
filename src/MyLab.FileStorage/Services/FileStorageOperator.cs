@@ -37,7 +37,7 @@ class FileStorageOperator : IStorageOperator
 
     public Stream OpenContentRead(Guid fileId)
     {
-        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        var filename = _fileIdConverter.ToContentFile(fileId);
         
         return new FileStream(filename, FileMode.Open);
     }
@@ -46,20 +46,15 @@ class FileStorageOperator : IStorageOperator
     {
         var metadataStr = JsonConvert.SerializeObject(metadata);
 
-        await using var fs = new FileStream(_fileIdConverter.ToMetadataFile(fileId), FileMode.Append, FileAccess.Write);
-        await using var wrtr = new StreamWriter(fs, Encoding.UTF8);
+        var fn = _fileIdConverter.ToMetadataFile(fileId);
 
-        await wrtr.WriteAsync(metadataStr);
+        await File.WriteAllTextAsync(fn, metadataStr);
     }
 
     public async Task<StoredFileMetadataDto?> ReadMetadataAsync(Guid fileId)
     {
         var filename = _fileIdConverter.ToMetadataFile(fileId);
-        
-        await using var strm = new FileStream(filename, FileMode.Open);
-        using var rdr = new StreamReader(strm);
-
-        var str = await rdr.ReadToEndAsync();
+        var str = await File.ReadAllTextAsync(filename);
 
         var dto = JsonConvert.DeserializeObject<StoredFileMetadataDto>(str);
 
@@ -72,13 +67,13 @@ class FileStorageOperator : IStorageOperator
 
     public Task WriteHashCtxAsync(Guid fileId, Md5Ex.Md5Context context)
     {
-        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        var filename = _fileIdConverter.ToHashCtxFile(fileId);
         return File.WriteAllBytesAsync(filename, context.Serialize());
     }
 
     public async Task<Md5Ex.Md5Context?> ReadHashCtxAsync(Guid fileId)
     {
-        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        var filename = _fileIdConverter.ToHashCtxFile(fileId);
         
         if (!File.Exists(filename)) return null;
 
@@ -89,7 +84,7 @@ class FileStorageOperator : IStorageOperator
 
     public Task DeleteHashCtxAsync(Guid fileId)
     {
-        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        var filename = _fileIdConverter.ToHashCtxFile(fileId);
 
         var fi = new FileInfo(filename);
         
@@ -112,7 +107,7 @@ class FileStorageOperator : IStorageOperator
 
     public long GetContentLength(Guid fileId)
     {
-        var filename = _fileIdConverter.ToMetadataFile(fileId);
+        var filename = _fileIdConverter.ToContentFile(fileId);
 
         var fi = new FileInfo(filename);
         

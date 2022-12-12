@@ -7,7 +7,7 @@ namespace MyLab.FileStorage.Client;
 /// <summary>
 /// Represents Upload API contract
 /// </summary>
-[Api("v1/files/new")]
+[Api("v1/files/new", Key = "fs-upload")]
 public interface IFsUploadApiV1
 {
     /// <summary>

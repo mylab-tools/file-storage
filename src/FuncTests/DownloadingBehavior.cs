@@ -16,6 +16,7 @@ namespace FuncTests;
 
 public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApiV1>>
 {
+    private readonly ITestOutputHelper _output;
     private const string FileData = "foobarbaz";
     
     private readonly IFsDownloadApiV1 _api;
@@ -25,6 +26,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
 
     public DownloadingBehavior(TestApi<Program, IFsDownloadApiV1> api, ITestOutputHelper output)
     {
+        _output = output;
         api.Output = output;
 
         var fileDataBin = Encoding.UTF8.GetBytes(FileData);
@@ -199,5 +201,31 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
                 "barbaz"
             }
         };
+    }
+
+    [Fact]
+    public void ShouldValidContract()
+    {
+        //Arrange
+        var apiContractValidator = new ApiContractValidator
+        {
+            ContractKeyMustBeSpecified = true
+        };
+
+        //Act
+        var validationResult = apiContractValidator.Validate(typeof(IFsDownloadApiV1));
+
+        if (!validationResult.Success)
+        {
+            _output.WriteLine("Errors:");
+
+            for (int i = 0; i < validationResult.Count; i++)
+            {
+                _output.WriteLine($"{i+1}. {validationResult[i].Reason}");
+            }
+        }
+
+        //Assert
+        Assert.True(validationResult.Success);
     }
 }

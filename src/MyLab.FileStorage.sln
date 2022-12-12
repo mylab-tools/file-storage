@@ -5,15 +5,19 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.FileStorage", "MyLab.FileStorage\MyLab.FileStorage.csproj", "{04E0EBC6-22D9-49CE-A97E-9EEB52417421}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E1F15AC5-244B-4894-A479-034025842F9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E1F15AC5-244B-4894-A479-034025842F9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuncTests", "FuncTests\FuncTests.csproj", "{D2600A4D-1F74-4312-B473-6BDAFC48011B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FuncTests", "FuncTests\FuncTests.csproj", "{D2600A4D-1F74-4312-B473-6BDAFC48011B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.FileStorage.Client", "MyLab.FileStorage.Client\MyLab.FileStorage.Client.csproj", "{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.FileStorage.Client", "MyLab.FileStorage.Client\MyLab.FileStorage.Client.csproj", "{C9764FF3-4599-4B89-9BC2-F1F805E51D4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.FileStorage.Cleaner", "MyLab.FileStorage.Cleaner\MyLab.FileStorage.Cleaner.csproj", "{426DE960-F7CC-4B46-975A-39FB82A1C362}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.FileStorage.Cleaner", "MyLab.FileStorage.Cleaner\MyLab.FileStorage.Cleaner.csproj", "{426DE960-F7CC-4B46-975A-39FB82A1C362}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests.Cleaner", "UnitTests.Cleaner\UnitTests.Cleaner.csproj", "{9245CF35-33E8-455A-BC2F-2950EE2CC565}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests.Cleaner", "UnitTests.Cleaner\UnitTests.Cleaner.csproj", "{9245CF35-33E8-455A-BC2F-2950EE2CC565}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FuncTests.Cleaner", "FuncTests.Cleaner\FuncTests.Cleaner.csproj", "{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTest", "IntegrationTest\IntegrationTest.csproj", "{2EDE4657-0757-483D-9AF7-07108EE0878D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9245CF35-33E8-455A-BC2F-2950EE2CC565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABBF071E-B5E1-457D-B1ED-967C7D619AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EDE4657-0757-483D-9AF7-07108EE0878D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

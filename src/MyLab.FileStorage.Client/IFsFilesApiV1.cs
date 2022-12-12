@@ -9,7 +9,7 @@ namespace MyLab.FileStorage.Client;
 /// <summary>
 /// Represents Files API contract
 /// </summary>
-[Api("v1/files/{file_id}")]
+[Api("v1/files/{file_id}", Key = "fs-files")]
 public interface IFsFilesApiV1
 {
     /// <summary>
