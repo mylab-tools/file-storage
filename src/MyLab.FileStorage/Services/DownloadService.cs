@@ -41,7 +41,7 @@ class DownloadService : IDownloadService
 
         var metadata = await GetMetadataAsync(fileId);
 
-        var fileStream = GetFileStream(fileId);
+        await using var fileStream = GetFileStream(fileId);
 
         var reader = new RangeStreamReader(rangeHeader);
 
@@ -64,7 +64,7 @@ class DownloadService : IDownloadService
 
         var metadata = await GetMetadataAsync(fileId);
 
-        var fileStream = GetFileStream(fileId);
+        await using var fileStream = GetFileStream(fileId);
 
         byte[] buff = new byte[fileStream!.Length];
 
