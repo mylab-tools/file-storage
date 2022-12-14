@@ -28,7 +28,7 @@ namespace FuncTests.Cleaner
 
             var fidConverter = new FileIdToNameConverter(BaseDir)
             {
-                PathSeparator = '/'
+                Separator = '/'
             };
 
             var confirmedFreshFid = Guid.NewGuid();

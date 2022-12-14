@@ -116,7 +116,7 @@ namespace FuncTests
         }
 
         [Fact]
-        public async Task ShouldConflictWhenUnconfirmed()
+        public async Task ShouldConflictWhenAlreadyConfirmed()
         {
             //Arrange
             var fileId = Guid.NewGuid();
@@ -152,7 +152,7 @@ namespace FuncTests
             //Act
             try
             {
-                await api.GetFileMetadataAsync(fileId);
+                await api.ConfirmFileAsync(fileId);
             }
             catch (ResponseCodeException e)
             {

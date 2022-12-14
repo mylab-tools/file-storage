@@ -7,7 +7,7 @@ namespace MyLab.FileStorage.Services
     {
         string CreateUploadToken(Guid fileId);
 
-        Task<Guid> CreateNewFileAsync(NewFileRequestDto? newFileRequest);
+        Task<Guid> CreateNewFileAsync(NewFileRequestDto newFileRequest);
         
         Task AppendFileData(Guid fileId, PipeReader pipeReader, int length);
 
