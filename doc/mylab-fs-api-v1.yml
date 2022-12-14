@@ -246,9 +246,6 @@ components:
           example: mail-attachment
         labels:
           $ref: '#/components/schemas/FileLabels'
-      required:
-      - purpose
-      - filename
   
     NewFile:
       type: object

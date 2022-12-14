@@ -25,20 +25,15 @@ class UploadService : IUploadService
         return uploadToken.Serialize(_options.TransferTokenSecret!, TimeSpan.FromSeconds(_options.UploadTokenTtlSec));
     }
 
-    public async Task<Guid> CreateNewFileAsync(NewFileRequestDto newFileRequest)
+    public async Task<Guid> CreateNewFileAsync(NewFileRequestDto? newFileRequest)
     {
-        if (newFileRequest == null)
-            throw new BadRequestException("Request not specified");
-        if (newFileRequest.Purpose == null)
-            throw new BadRequestException("Purpose not specified");
-
         Guid fileId = Guid.NewGuid();
         var metadata = new StoredFileMetadataDto
         {
             Id = fileId,
             Created = DateTime.Now,
-            Labels = newFileRequest.Labels,
-            Purpose = newFileRequest.Purpose
+            Labels = newFileRequest?.Labels,
+            Purpose = newFileRequest?.Purpose
         };
 
         await _operator.TouchBaseDirectoryAsync(fileId);
