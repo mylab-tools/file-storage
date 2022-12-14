@@ -35,12 +35,7 @@ namespace FuncTests
 
             var api = StartApp(storageOpMock.Object);
 
-            var newFileRequest = new NewFileRequestDto
-            {
-                Purpose = "test"
-            };
-
-            var uploadToken = await api.CreateNewFileAsync(newFileRequest);
+            var uploadToken = await api.CreateNewFileAsync();
 
             //Act
             await api.UploadNextChunkAsync(uploadToken, filedDataChunk1);
@@ -77,13 +72,8 @@ namespace FuncTests
                 .ReturnsAsync(() => storedMetadata!);
 
             var api = StartApp(storageOpMock.Object);
-
-            var newFileRequest = new NewFileRequestDto
-            {
-                Purpose = "test"
-            };
-
-            var uploadToken = await api.CreateNewFileAsync(newFileRequest);
+            
+            var uploadToken = await api.CreateNewFileAsync();
 
             await api.UploadNextChunkAsync(uploadToken, fileData);
 
@@ -226,13 +216,8 @@ namespace FuncTests
 
 
             var api = StartApp(storageOpMock.Object);
-
-            var newFileRequest = new NewFileRequestDto
-            {
-                Purpose = "test"
-            };
-
-            var uploadToken = await api.CreateNewFileAsync(newFileRequest);
+            
+            var uploadToken = await api.CreateNewFileAsync();
 
             //Meaning await api.UploadNextChunkAsync(uploadToken, fileData);
 

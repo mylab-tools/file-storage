@@ -25,7 +25,7 @@ namespace MyLab.FileStorage.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateNewUploading([FromBody]NewFileRequestDto newFileRequest)
+        public async Task<IActionResult> CreateNewUploading([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)]NewFileRequestDto? newFileRequest = null)
         {
             var newFileId = await _uploadService.CreateNewFileAsync(newFileRequest);
 
