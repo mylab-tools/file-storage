@@ -51,7 +51,7 @@ class FileStorageOperator : IStorageOperator
         await File.WriteAllTextAsync(fn, metadataStr);
     }
 
-    public async Task<StoredFileMetadataDto?> ReadMetadataAsync(Guid fileId)
+    public async Task<StoredFileMetadataDto> ReadMetadataAsync(Guid fileId)
     {
         var filename = _fileIdConverter.ToMetadataFile(fileId);
         var str = await File.ReadAllTextAsync(filename);
@@ -59,7 +59,7 @@ class FileStorageOperator : IStorageOperator
         var dto = JsonConvert.DeserializeObject<StoredFileMetadataDto>(str);
 
         if (dto == null)
-            throw new FormatException("Metadata file has from format")
+            throw new FormatException("Metadata file has wrong format")
                 .AndFactIs("file-id", fileId);
 
         return dto;

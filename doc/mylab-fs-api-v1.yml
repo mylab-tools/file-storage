@@ -242,10 +242,13 @@ components:
       properties:
         purpose: 
           type: string
-          description: Defines file purpose. May be used by target service.
+          description: Defines file purpose. Assigned by target service.
           example: mail-attachment
         labels:
           $ref: '#/components/schemas/FileLabels'
+      required:
+      - purpose
+      - filename
   
     NewFile:
       type: object

@@ -39,6 +39,8 @@ namespace IntegrationTest
                 await _uploadApi.UploadNextChunkAsync(uploadToken, buff);
             }
 
+            await Task.Delay(1000);
+
             var newFile = await _uploadApi.CompleteFileUploadingAsync(uploadToken, uploadCompletion);
 
             if (newFile.File != null)
