@@ -9,7 +9,7 @@ namespace MyLab.FileStorage.Services
 
         Task<Guid> CreateNewFileAsync(NewFileRequestDto? newFileRequest);
         
-        Task AppendFileData(Guid fileId, PipeReader pipeReader, int length);
+        Task AppendFileData(Guid fileId, Stream bodyStream, int length);
 
         Task<NewFileDto> CompleteFileCreation(Guid fileId, UploadCompletionDto completion);
     }

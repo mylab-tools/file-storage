@@ -42,7 +42,7 @@ class UploadService : IUploadService
         return fileId;
     }
 
-    public async Task AppendFileData(Guid fileId, PipeReader pipeReader, int length)
+    public async Task AppendFileData(Guid fileId, Stream bodyStream, int length)
     {
         if (length / 1024 > _options.UploadChunkLimitKiB)
             throw new DataTooLargeException();
@@ -56,7 +56,12 @@ class UploadService : IUploadService
                     .AndFactIs("file-id", fileId);
         }
 
-        var chunk = await ReadDataFromPipe(pipeReader, length);
+        byte[] chunk;
+        using (var ms = new MemoryStream())
+        {
+            await bodyStream.CopyToAsync(ms);
+            chunk = ms.ToArray();
+        }
 
         await _operator.TouchBaseDirectoryAsync(fileId);
 
@@ -153,19 +158,5 @@ class UploadService : IUploadService
         }
 
         return success;
-    }
-
-    private async Task<byte[]> ReadDataFromPipe(PipeReader reader, int contentLength)
-    {
-        var readTimeout = TimeSpan.FromSeconds(30);
-        var cts = new CancellationTokenSource(readTimeout);
-        var readResult = await reader.ReadAtLeastAsync(contentLength, cts.Token);
-
-        if (readResult.Buffer.Length != contentLength)
-        {
-            throw new InvalidOperationException($"Cant read input stream in {readTimeout}");
-        }
-
-        return readResult.Buffer.ToArray();
     }
 }
