@@ -262,3 +262,6 @@ catch (SecurityTokenValidationException e)
 }
 ```
 
+## Метрики
+
+*Файловое хранилище* и *Cleaner* предоставляют [http-метрики](https://github.com/mylab-monitoring/http-metrics) по адресу `/metrics`в формате [OpenMetrics](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md).
