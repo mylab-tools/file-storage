@@ -1,6 +1,9 @@
 using MyLab.FileStorage;
 using MyLab.FileStorage.Services;
+using MyLab.HttpMetrics;
+using MyLab.Log;
 using MyLab.WebErrors;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,13 +20,15 @@ srv.AddSingleton<IUploadService, UploadService>()
     .AddSingleton<IStorageOperator, FileStorageOperator>()
     .Configure<FsOptions>(builder.Configuration.GetSection("FS"));
 
+srv.AddLogging(lb => lb.AddMyLabConsole())
+    .AddUrlBasedHttpMetrics();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
-app.UseAuthorization();
+app.UseUrlBasedHttpMetrics();
 
 app.MapControllers();
+app.MapMetrics();
 
 app.Run();
 
