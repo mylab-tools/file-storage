@@ -233,8 +233,35 @@ volumes:
 
 Для разработки клиента на `.NET` предусмотрена библиотека с контрактами `API` сервиса *файлового хранилища*. Опубликовано в виде `NuGet` пакета [MyLab.FileStorage.Client](https://www.nuget.org/packages/MyLab.FileStorage.Client/). 
 
+### Контракты
+
 Контракты разработаны с использованием [MyLab.ApiClient](https://github.com/mylab-tools/apiclient):
 
 * [`IFsFilesApiV1`](./src/MyLab.FileStorage.Client/IFsFilesApiV1.cs) - API доступа к фалам. Ключ конфигурации `fs-files`;
 * [`IFsDownloadApiV1`](./src/MyLab.FileStorage.Client/IFsDownloadApiV1.cs) - API Скачивания. Ключ конфигурации `fs-download`;
 * [`IFsUploadApiV1`](./src/MyLab.FileStorage.Client/IFsUploadApiV1.cs) - API Загрузки. Ключ конфигурации `fs-upload`.
+
+### Файловый токен
+
+В приложении, принимающем загруженный файл, требуется осуществлять проверку переданного токена файла. Эти функкции выполняет класс `FileToken` из пространства имён `MyLab.FileStorage.Client.Tools`.
+
+Ниже приведён пример проверки и извлечения данных о загруженном файле:
+
+```C#
+StoredFileMetadataDto fileMetadata = null;
+
+try
+{
+    FileToken actualFileToken = FileToken.VerifyAndDeserialize(strFileToken, Secret);
+    
+    fileMetadata = actualFileToken.FileMetadata;
+}
+catch (SecurityTokenValidationException e)
+{
+	//Handle invalid file token
+}
+```
+
+## Метрики
+
+*Файловое хранилище* и *Cleaner* предоставляют [http-метрики](https://github.com/mylab-monitoring/http-metrics) по адресу `/metrics`в формате [OpenMetrics](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md).

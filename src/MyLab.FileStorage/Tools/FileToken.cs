@@ -27,7 +27,7 @@ namespace MyLab.FileStorage.Client.Tools
         /// <summary>
         /// Stored file metadata
         /// </summary>
-        public StoredFileMetadataDto? FileMetadata { get; }
+        public StoredFileMetadataDto FileMetadata { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FileToken"/>
@@ -40,6 +40,7 @@ namespace MyLab.FileStorage.Client.Tools
         /// <summary>
         /// Verify sign and deserialize an object
         /// </summary>
+        /// <exception cref="SecurityTokenValidationException">Invalid token</exception>
         public static FileToken VerifyAndDeserialize(string tokenStr, string secret)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
@@ -82,6 +83,8 @@ namespace MyLab.FileStorage.Client.Tools
 
         }
 
+#if SERVER_APP
+
         /// <summary>
         /// Serializes token to string with secret and TTL
         /// </summary>
@@ -103,5 +106,7 @@ namespace MyLab.FileStorage.Client.Tools
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+#endif
     }
 }

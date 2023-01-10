@@ -47,7 +47,7 @@ namespace MyLab.FileStorage.Controllers
             
             var token = TransferToken.VerifyAndDeserialize(uploadToken, _options.TransferTokenSecret!);
 
-            await _uploadService.AppendFileData(token.FileId, Request.BodyReader, (int)Request.ContentLength.Value);
+            await _uploadService.AppendFileData(token.FileId, Request.Body, (int)Request.ContentLength.Value);
             
             return Ok();
 
