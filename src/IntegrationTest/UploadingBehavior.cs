@@ -23,7 +23,7 @@ namespace IntegrationTest
                 Md5 = _fileDataHash
             };
 
-            var fnConverter = new FileIdToNameConverter("test-data");
+            var fnConverter = new FileIdToNameConverter(TestStuff.DataDir);
 
             //Act
             var uploadToken = await _uploadApi.CreateNewFileAsync(newFileReq);
@@ -45,6 +45,7 @@ namespace IntegrationTest
 
             if (newFile.File != null)
             {
+                _curTestFid = newFile.File.Id;
                 await _fileApi.ConfirmFileAsync(newFile.File.Id);
             }
 
@@ -55,7 +56,6 @@ namespace IntegrationTest
             {
                 resData = await File.ReadAllBytesAsync(uDataFn);
             }
-
 
             var uMetaFn = fnConverter.ToMetadataFile(newFile.File!.Id);
             StoredFileMetadataDto? metadataDto = null;

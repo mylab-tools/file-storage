@@ -21,6 +21,11 @@
             return _basePath.TrimEnd(Separator) + Separator + GuidToPath(fileId);
         }
 
+        public string ToFirstDirectory(Guid fileId)
+        {
+            return _basePath.TrimEnd(Separator) + Separator + GuidToFirstPath(fileId);
+        }
+
         public Guid GetIdFromDirectory(string directory)
         {
             var rel = Path.GetRelativePath(_basePath, directory);
@@ -46,6 +51,12 @@
                 guidStr.Substring(4, 4),
                 guidStr.Substring(8, 24)
             );
+        }
+
+        string GuidToFirstPath(Guid id)
+        {
+            var guidStr = id.ToString("N");
+            return guidStr.Substring(0, 4);
         }
     }
 }

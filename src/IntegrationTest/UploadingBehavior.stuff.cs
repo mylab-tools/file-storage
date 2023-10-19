@@ -20,6 +20,8 @@ public partial class UploadingBehavior :
     private const string TransferTokenSecret = "1234567890123456";
     private const string FileTokenSecret = "6543210987654321";
 
+    private Guid _curTestFid;
+
     public UploadingBehavior(
         TestApi<Program, IFsUploadApiV1> uploadApi,
         TestApi<Program, IFsFilesApiV1> fileApi,
@@ -35,9 +37,7 @@ public partial class UploadingBehavior :
         var md5 = MD5.Create();
         _fileDataHash = md5.ComputeHash(_fileData);
 
-        if (Directory.Exists("test-data"))
-            Directory.Delete("test-data", true);
-        Directory.CreateDirectory("test-data");
+        TestStuff.TouchDataDir();
 
         _uploadApi = uploadApi.StartWithProxy(srv => srv.AddLogging(lb => lb
                 .ClearProviders()
@@ -48,7 +48,7 @@ public partial class UploadingBehavior :
             {
                 opt.TransferTokenSecret = TransferTokenSecret;
                 opt.FileTokenSecret = FileTokenSecret;
-                opt.Directory = "test-data";
+                opt.Directory = TestStuff.DataDir;
             }));
 
         _fileApi = fileApi.StartWithProxy(srv => srv.AddLogging(lb => lb
@@ -60,13 +60,13 @@ public partial class UploadingBehavior :
             {
                 opt.TransferTokenSecret = TransferTokenSecret;
                 opt.FileTokenSecret = FileTokenSecret;
-                opt.Directory = "test-data";
+                opt.Directory = TestStuff.DataDir;
             }));
     }
 
     public void Dispose()
     {
-        if (Directory.Exists("test-data"))
-            Directory.Delete("test-data", true);
+        if(_curTestFid != default)
+            TestStuff.DeleteFileDataDir(_curTestFid);
     }
 }

@@ -35,9 +35,7 @@ namespace IntegrationTest
             var md5 = MD5.Create();
             _fileDataHash = md5.ComputeHash(_fileData);
 
-            if (Directory.Exists("test-data"))
-                Directory.Delete("test-data", true);
-            Directory.CreateDirectory("test-data");
+            TestStuff.TouchDataDir();
 
             _fid = Guid.NewGuid();
 
@@ -102,8 +100,7 @@ namespace IntegrationTest
 
         public void Dispose()
         {
-            if (Directory.Exists("test-data"))
-                Directory.Delete("test-data", true);
+            TestStuff.DeleteFileDataDir(_fid);
         }
     }
 }
