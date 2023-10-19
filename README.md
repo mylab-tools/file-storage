@@ -8,7 +8,7 @@ Docker образ `API`: [![Docker image](https://img.shields.io/static/v1?label
 
 Docker образ `Clenaer`: [![Docker image](https://img.shields.io/static/v1?label=docker&style=flat&logo=docker&message=image&color=blue)](https://github.com/orgs/mylab-tools/packages/container/package/fs-cleaner)
 
-Спецификация `API` : [![API specification](https://img.shields.io/badge/OAS3-v1%20-green)](https://app.swaggerhub.com/apis/ozzy/MyLab.FileStorage/1)
+Спецификация `API` : [![API specification](https://img.shields.io/badge/OAS3-v1-green)](https://app.swaggerhub.com/apis/OZZYEXT/MyLab.FileStorage/1.1) 
 
 Клиент: [![NuGet](https://img.shields.io/nuget/v/MyLab.FileStorage.Client.svg)](https://www.nuget.org/packages/MyLab.FileStorage.Client/)
 
@@ -43,7 +43,8 @@ Docker образ `Clenaer`: [![Docker image](https://img.shields.io/static/v1?l
   "labels": {
     "owner": "user@host.com",
     "sign": "b2xvbG8="
-  }
+  },
+  "ttlh": "2"
 }
 ```
 
@@ -53,7 +54,8 @@ Docker образ `Clenaer`: [![Docker image](https://img.shields.io/static/v1?l
 * `created` - дата и время появления файла в хранилище;
 * `md5` - `MD5` хэш файла в формате `HEX` строки;
 * `filename` - имя файла;
-* `labels` - произвольные метки в формате ключ-значение, имеющие значение в предметной области приложения.
+* `labels` - произвольные метки в формате ключ-значение, имеющие значение в предметной области приложения,
+* `ttlh` - время жизни файла в часах (установлено только, если было указано клиентом при создании загрузки).
 
 ## Загрузка файла
 
@@ -175,10 +177,11 @@ POST /processing
 
 Очистка хранилища - удаление устаревших файлов:
 
-* если файл не подтверждён и создан ранее указанного в конфигурации периода относительно текущего времени;
-* если файл подтверждён и создан ранее указанного в конфигурации периода относительно текущего времени.
+* если файл не подтверждён и существует больше указанного в конфигурации периода;
+* если файл подтверждён и если при его создании было указано время жизни и существует более этого времени;
+* если файл подтверждён и если при его создании не было указано время жизни и существует более указанного в конфигурации периода.
 
-Удаление подтверждённых файлов опционально и настраивается в конфигурации. Используется для работы *файлового хранилища* в режиме `хранилища временных файлов`.
+Удаление подтверждённых файлов, для которых не было указано время жизни при создании, опционально и настраивается в конфигурации. Используется для работы *файлового хранилища* в режиме `хранилища временных файлов`.
 
 ### Конфигурация
 
