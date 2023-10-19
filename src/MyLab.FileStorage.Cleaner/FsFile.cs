@@ -5,6 +5,8 @@ public class FsFile
     public string Directory { get; }
     public bool Confirmed { get; set; }
     public DateTime CreateDt { get; set; }
+
+    public int? TtlHours{get;set;}
         
     public FsFile(string directory)
     {

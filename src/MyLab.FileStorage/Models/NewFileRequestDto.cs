@@ -19,6 +19,12 @@ namespace MyLab.FileStorage.Client.Models
         public string? Purpose { get; set; }
 
         /// <summary>
+        /// Defines a time to live in hours
+        /// </summary>
+        [JsonProperty("ttlh")]
+        public int? TtlHours { get; set; }
+
+        /// <summary>
         /// Key-value labels
         /// </summary>
         [JsonProperty("labels")]

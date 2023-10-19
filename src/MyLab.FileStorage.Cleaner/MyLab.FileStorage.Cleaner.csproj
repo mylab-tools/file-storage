@@ -16,6 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\MyLab.FileStorage\Models\StoredFileMetadataDto.cs" Link="Models\StoredFileMetadataDto.cs" />
+    <Compile Include="..\MyLab.FileStorage\Models\JsonConverters.cs" Link="Models\JsonConverters.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Tools\" />
   </ItemGroup>
 

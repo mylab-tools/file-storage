@@ -21,6 +21,12 @@ namespace MyLab.FileStorage.Client.Models
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Defines a time to live in hours
+        /// </summary>
+        [JsonProperty("ttlh")]
+        public int? TtlHours { get; set; }
+
+        /// <summary>
         /// Defines file purpose. Assigned by target service.
         /// </summary>
         [JsonProperty("purpose")]

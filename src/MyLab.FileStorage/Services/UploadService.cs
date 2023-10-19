@@ -33,7 +33,8 @@ class UploadService : IUploadService
             Id = fileId,
             Created = DateTime.Now,
             Labels = newFileRequest?.Labels,
-            Purpose = newFileRequest?.Purpose
+            Purpose = newFileRequest?.Purpose,
+            TtlHours = newFileRequest?.TtlHours
         };
 
         await _operator.TouchBaseDirectoryAsync(fileId);
@@ -102,7 +103,8 @@ class UploadService : IUploadService
             Created = initialMetadata != null
                 ? initialMetadata.Created
                 : DateTime.Now,
-            Purpose = initialMetadata?.Purpose
+            Purpose = initialMetadata?.Purpose,
+            TtlHours = initialMetadata?.TtlHours
         };
         
         await _operator.WriteMetadataAsync(fileId, metadata);

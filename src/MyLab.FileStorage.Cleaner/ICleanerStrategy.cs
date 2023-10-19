@@ -2,7 +2,7 @@
 
 public interface ICleanerStrategy
 {
-    IEnumerable<FsFile> GetFileDirectories(CancellationToken cancellationToken);
+    Task<IEnumerable<FsFile>> GetFileDirectories(CancellationToken cancellationToken);
 
     void DeleteDirectory(string directory);
 }

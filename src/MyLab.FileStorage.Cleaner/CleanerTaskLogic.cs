@@ -32,19 +32,23 @@ namespace MyLab.FileStorage.Cleaner
                 : null;
         }
 
-        public Task Perform(CancellationToken cancellationToken)
+        public async Task Perform(CancellationToken cancellationToken)
         {
-            foreach (var fsFile in _strategy.GetFileDirectories(cancellationToken))
+            foreach (var fsFile in await _strategy.GetFileDirectories(cancellationToken))
             {
                 var liveTime = DateTime.Now - fsFile.CreateDt;
 
                 if (fsFile.Confirmed)
                 {
-                    if (_storedTtl.HasValue && liveTime > _storedTtl.Value)
+                    TimeSpan? ttl = fsFile.TtlHours.HasValue 
+                        ? TimeSpan.FromHours(fsFile.TtlHours.Value) 
+                        : _storedTtl;
+
+                    if (ttl.HasValue && liveTime > ttl.Value)
                     {
                         _strategy.DeleteDirectory(fsFile.Directory);
 
-                        LogDeletion(fsFile.Directory, "The stored file has been deleted", liveTime);
+                        LogDeletion(fsFile.Directory, "The stored file has been deleted", liveTime, ttl);
                     }
                 }
                 else
@@ -53,15 +57,13 @@ namespace MyLab.FileStorage.Cleaner
                     {
                         _strategy.DeleteDirectory(fsFile.Directory);
 
-                        LogDeletion(fsFile.Directory, "The lost file has been deleted", liveTime);
+                        LogDeletion(fsFile.Directory, "The lost file has been deleted", liveTime, _lostFileTtl);
                     }
                 }
             }
-
-            return Task.CompletedTask;
         }
 
-        void LogDeletion(string fileDirectory, string message, TimeSpan liveTime)
+        void LogDeletion(string fileDirectory, string message, TimeSpan liveTime, TimeSpan? ttlLimit)
         {
             if(_log == null) return;
             
@@ -81,6 +83,7 @@ namespace MyLab.FileStorage.Cleaner
             _log?.Action(message)
                 .AndFactIs("file-id", fid)
                 .AndFactIs("live-time", liveTime)
+                .AndFactIs("ttl-limit", ttlLimit)
                 .Write();
         }
     }

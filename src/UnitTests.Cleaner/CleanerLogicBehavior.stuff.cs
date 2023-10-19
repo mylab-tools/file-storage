@@ -56,6 +56,6 @@ public partial class CleanerLogicBehavior
 
         _strategyMock = new Mock<ICleanerStrategy>();
         _strategyMock.Setup(s => s.GetFileDirectories(It.IsAny<CancellationToken>()))
-            .Returns(files);
+            .Returns(Task.FromResult((IEnumerable<FsFile>)files));
     }
 }
