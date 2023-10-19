@@ -97,7 +97,7 @@ paths:
         '401':
           description: Invalid token
         '413':
-          description: Chunk is too large
+          description: Chunk or uploaded file is too large
           
   '/files/new/completion':
   
@@ -127,6 +127,9 @@ paths:
           description: Invalid token
         '409':
           description: Invalid checksum
+        '404':
+          description: File not found
+        
           
   '/files/{file_id}/download-token':
     
@@ -203,6 +206,7 @@ paths:
           description: Invalid range
       
 components:
+
   parameters:
   
     FileId:

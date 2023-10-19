@@ -38,10 +38,9 @@ namespace MyLab.FileStorage.Controllers
         }
 
         [HttpGet("{file_id}/content")]
-        [ErrorToResponse(typeof(SecurityTokenValidationException), HttpStatusCode.Unauthorized, "Invalid token")]
         [ErrorToResponse(typeof(FileNotFoundException), HttpStatusCode.NotFound, "File not found")]
         [ErrorToResponse(typeof(DataTooLargeException), HttpStatusCode.RequestEntityTooLarge, "Requested range is too large")]
-        [ErrorToResponse(typeof(MultipleRangeNotSupportedException), HttpStatusCode.BadRequest, "Multiple range is not supported")]
+        [ErrorToResponse(typeof(MultipleRangeNotSupportedException), HttpStatusCode.RequestedRangeNotSatisfiable, "Multiple range is not supported")]
         public async Task<IActionResult> DownloadFile([FromRoute(Name = "file_id")] string fileId, [FromHeader(Name = "Range")]string? rangeHeader)
         {
             if (!Guid.TryParse(fileId, out var guidId))
@@ -79,7 +78,7 @@ namespace MyLab.FileStorage.Controllers
         [ErrorToResponse(typeof(SecurityTokenValidationException), HttpStatusCode.Unauthorized, "Invalid token")]
         [ErrorToResponse(typeof(FileNotFoundException), HttpStatusCode.NotFound, "File not found")]
         [ErrorToResponse(typeof(DataTooLargeException), HttpStatusCode.RequestEntityTooLarge, "Requested range is too large")]
-        [ErrorToResponse(typeof(MultipleRangeNotSupportedException), HttpStatusCode.BadRequest, "Multiple range is not supported")]
+        [ErrorToResponse(typeof(MultipleRangeNotSupportedException), HttpStatusCode.RequestedRangeNotSatisfiable, "Multiple range is not supported")]
         public async Task<IActionResult> DownloadFileByToken([FromQuery(Name = "token")] string downloadToken, [FromHeader(Name = "Range")] string? rangeHeader)
         {
             var token = TransferToken.VerifyAndDeserialize(downloadToken, _options.TransferTokenSecret!);
