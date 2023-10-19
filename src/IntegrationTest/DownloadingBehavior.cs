@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MyLab.ApiClient;
 using MyLab.ApiClient.Test;
 using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
@@ -20,6 +21,7 @@ namespace IntegrationTest
         private readonly byte[] _fileDataHash;
         private readonly IFsDownloadApiV1 _downloadApi;
         private readonly Guid _fid;
+        private ITestOutputHelper _output;
         private const string TransferTokenSecret = "1234567890123456";
         private const string FileTokenSecret = "6543210987654321";
 
@@ -27,6 +29,7 @@ namespace IntegrationTest
             TestApi<Program, IFsDownloadApiV1> downloadApi,
             ITestOutputHelper output)
         {
+            _output = output;
             downloadApi.Output = output;
 
             _fileData = new byte[300];
@@ -96,6 +99,49 @@ namespace IntegrationTest
 
             //Assert
             Assert.Equal(_fileData, resultBuff);
+        }
+
+        [Fact]
+        public async Task ShouldNot416WhenPartiallyOutOfRangeDownload()
+        {
+            //Arrange
+            byte[]? receivedFileChunk = null;
+            ResponseCodeException? exception416 = null;
+
+            //Act
+            try
+            {
+                receivedFileChunk = await _downloadApi.DownloadByFileId(_fid, new RangeHeaderValue(_fileData.Length -1, _fileData.Length + 10));
+            }
+            catch(ResponseCodeException e) when(e.StatusCode == System.Net.HttpStatusCode.RequestedRangeNotSatisfiable)
+            {
+                exception416 = e;
+            }
+
+            //Assert
+            Assert.Null(exception416);
+            Assert.NotNull(receivedFileChunk);
+            Assert.Single(receivedFileChunk);
+        }
+
+        [Fact]
+        public async Task Should416WhenFullOutOfRangeDownload()
+        {
+            //Arrange
+            ResponseCodeException? exception416 = null;
+
+            //Act
+            try
+            {
+                await _downloadApi.DownloadByFileId(_fid, new RangeHeaderValue(_fileData.Length + 1, _fileData.Length + 10));
+            }
+            catch(ResponseCodeException e) when(e.StatusCode == System.Net.HttpStatusCode.RequestedRangeNotSatisfiable)
+            {
+                exception416 = e;
+            }
+
+            //Assert
+            Assert.NotNull(exception416);
         }
 
         public void Dispose()

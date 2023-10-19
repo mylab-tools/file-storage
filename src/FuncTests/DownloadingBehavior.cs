@@ -10,6 +10,7 @@ using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Services;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace FuncTests;
@@ -80,7 +81,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     public async Task ShouldDownloadPartialFileByToken(RangeItemHeaderValue[] rangeItems, string expectedResult)
     {
         //Arrange
-        _fileStream.Seek(0, SeekOrigin.Begin);
+        //_fileStream.Seek(0, SeekOrigin.Begin);
 
         var rangeHeader = new RangeHeaderValue();
 
@@ -101,7 +102,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     public async Task ShouldNotDownloadMultiplePartialFileByToken()
     {
         //Arrange
-        _fileStream.Seek(0, SeekOrigin.Begin);
+        //_fileStream.Seek(0, SeekOrigin.Begin);
 
         var rangeHeader = new RangeHeaderValue();
         rangeHeader.Ranges.Add(new RangeItemHeaderValue(0, 1));
@@ -111,7 +112,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
 
         //Act && Assert
         var e = await Assert.ThrowsAsync<ResponseCodeException>(() => _api.DownloadByToken(token, rangeHeader));
-        Assert.Equal(HttpStatusCode.BadRequest, e.StatusCode);
+        Assert.Equal(HttpStatusCode.RequestedRangeNotSatisfiable, e.StatusCode);
         Assert.Contains("not supported", e.ServerMessage);
     }
 
@@ -133,7 +134,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     public async Task ShouldDownloadPartialFileById(RangeItemHeaderValue[] rangeItems, string expectedResult)
     {
         //Arrange
-        _fileStream.Seek(0, SeekOrigin.Begin);
+        //_fileStream.Seek(0, SeekOrigin.Begin);
 
         var rangeHeader = new RangeHeaderValue();
 
@@ -152,7 +153,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     public async Task ShouldNotDownloadMultiplePartialFileById()
     {
         //Arrange
-        _fileStream.Seek(0, SeekOrigin.Begin);
+        //_fileStream.Seek(0, SeekOrigin.Begin);
 
         var rangeHeader = new RangeHeaderValue();
         rangeHeader.Ranges.Add(new RangeItemHeaderValue(0, 1));
@@ -160,9 +161,53 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
 
         //Act && Assert
         var e = await Assert.ThrowsAsync<ResponseCodeException>(() => _api.DownloadByFileId(_fileId, rangeHeader));
-        Assert.Equal(HttpStatusCode.BadRequest, e.StatusCode);
+        Assert.Equal(HttpStatusCode.RequestedRangeNotSatisfiable, e.StatusCode);
         Assert.Contains("not supported", e.ServerMessage);
     }
+
+    [Fact]
+    public async Task ShouldNot416WhenPartiallyOutOfRangeDownload()
+    {
+        //Arrange
+        byte[]? receivedFileChunk = null;
+        ResponseCodeException? exception416 = null;
+
+        //Act
+        try
+        {
+            receivedFileChunk = await _api.DownloadByFileId(_fileId, new RangeHeaderValue(_fileStream.Length -1, _fileStream.Length + 10));
+        }
+        catch(ResponseCodeException e) when(e.StatusCode == System.Net.HttpStatusCode.RequestedRangeNotSatisfiable)
+        {
+            exception416 = e;
+        }
+
+        //Assert
+        Assert.Null(exception416);
+        Assert.NotNull(receivedFileChunk);
+        Assert.Single(receivedFileChunk);
+    }
+
+    [Fact]
+    public async Task Should416WhenFullOutOfRangeDownload()
+    {
+        //Arrange
+        ResponseCodeException? exception416 = null;
+
+        //Act
+        try
+        {
+            await _api.DownloadByFileId(_fileId, new RangeHeaderValue(_fileStream.Length + 1, _fileStream.Length + 10));
+        }
+        catch(ResponseCodeException e) when(e.StatusCode == System.Net.HttpStatusCode.RequestedRangeNotSatisfiable)
+        {
+            exception416 = e;
+        }
+
+        //Assert
+        Assert.NotNull(exception416);
+    }
+
 
     public static IEnumerable<object[]> GetRangeCases()
     {

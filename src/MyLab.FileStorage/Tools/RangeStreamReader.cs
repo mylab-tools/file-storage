@@ -60,8 +60,11 @@ namespace MyLab.FileStorage.Tools
 
                     var read = await stream.ReadAsync(buff, 0, (int)rangeLen);
 
-                    var rangeHeader = new ContentRangeHeaderValue(startPos, startPos + read, fileLen);
-                    reads.Add(new ReadRange(range, rangeHeader, AlignBuff(buff, read)));
+                    if(read != 0)
+                    {
+                        var rangeHeader = new ContentRangeHeaderValue(startPos, startPos + read, fileLen);
+                        reads.Add(new ReadRange(range, rangeHeader, AlignBuff(buff, read)));   
+                    }
                 }
             }
 

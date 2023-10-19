@@ -57,8 +57,10 @@ namespace MyLab.FileStorage.Controllers
 
                 var readResult = await _downloadService.ReadContentAsync(guidId, rangeValue);
 
-                if (readResult.FileReads.Length == 0)
-                    return StatusCode((int)HttpStatusCode.RequestedRangeNotSatisfiable);
+                if(readResult.FileReads.Length == 0)
+                {
+                    return StatusCode((int)HttpStatusCode.RequestedRangeNotSatisfiable, "Range header value out of file content range");
+                }
 
                 return new PartialContentResult(readResult.FileReads);
             }
