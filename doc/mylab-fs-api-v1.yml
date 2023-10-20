@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: MyLab.FileStorage API
-  version: '1.1'
+  version: '1.1.1'
 tags:
   - name: Files
   - name: Upload
@@ -172,12 +172,18 @@ paths:
               example: "[example binary string]"
         '206':
           description: Partial file content
+          content:
+            'application/octet-stream':
+              schema:
+                type: string
+                format: binary
+              example: "[example binary string]"
         '401':
           description: Invalid token
         '404':
           description: File not found
         '416':
-          description: Invalid range
+          description: Invalid range or requested data too large
           
   '/files/{file_id}/content':
     
@@ -200,10 +206,16 @@ paths:
               example: "[example binary string]"
         '206':
           description: Partial file content
+          content:
+            'application/octet-stream':
+              schema:
+                type: string
+                format: binary
+              example: "[example binary string]"
         '404':
           description: File not found
         '416':
-          description: Invalid range
+          description: Invalid range or requested data too large
       
 components:
 
