@@ -27,66 +27,25 @@ class DownloadService : IDownloadService
             .Serialize(_options.TransferTokenSecret!, TimeSpan.FromSeconds(_options.DownloadTokenTtlSec));
     }
 
-    public async Task<(RangeStreamReader.ReadRange[] FileReads, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId, RangeHeaderValue rangeHeader)
+    public async Task<ReadFile> ReadFileAsync(Guid fileId)
     {
-        // if file does not exists or is not confirmed
-        if (!_storageOperator.IsConfirmedFileExists(fileId))
-            throw new FileNotFoundException()
-                .AndFactIs("file-id", fileId);
-
-        var fileLen = _storageOperator.GetContentLength(fileId);
-
-        if (rangeHeader.GetTotalLength(fileLen) / 1024 > _options.DownloadChunkLimitKiB)
-            throw new DataTooLargeException();
-
         var metadata = await GetMetadataAsync(fileId);
 
-        await using var fileStream = GetFileStream(fileId);
-
-        var reader = new RangeStreamReader(rangeHeader);
-
-        var reads = await reader.ReadAsync(fileStream!);
-
-        return (reads, metadata);
-    }
-
-    public async Task<(byte[] Content, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId)
-    {
-        // if file does not exists or is not confirmed
-        if (!_storageOperator.IsConfirmedFileExists(fileId))
-            throw new FileNotFoundException()
-                .AndFactIs("file-id", fileId);
-
-        var fileLen = _storageOperator.GetContentLength(fileId);
-
-        if (fileLen / 1024 > _options.DownloadChunkLimitKiB)
-            throw new DataTooLargeException();
-
-        var metadata = await GetMetadataAsync(fileId);
-
-        await using var fileStream = GetFileStream(fileId);
-
-        byte[] buff = new byte[fileStream!.Length];
-
-        var read = await fileStream.ReadAsync(buff, 0, buff.Length);
-
-        return (buff, metadata);
-    }
-
-    private Stream GetFileStream(Guid fileId)
-    {
         var fileStream = _storageOperator.OpenContentRead(fileId);
 
-        if (fileStream == null)
-        {
-            throw new InvalidOperationException("Content not found")
-                .AndFactIs("file-id", fileId);
-        }
+        var md5Str = metadata.Md5 != null 
+            ? BitConverter.ToString(metadata.Md5).Replace("-", "")
+            : null;
 
-        return fileStream;
+        return new ReadFile(fileStream)
+        {
+            Created = metadata.Created,
+            Filename = metadata.Filename,
+            Md5 = md5Str,
+        };
     }
 
-    private async Task<StoredFileMetadataDto?> GetMetadataAsync(Guid fileId)
+    private async Task<StoredFileMetadataDto> GetMetadataAsync(Guid fileId)
     {
         var metadata = await _storageOperator.ReadMetadataAsync(fileId);
 

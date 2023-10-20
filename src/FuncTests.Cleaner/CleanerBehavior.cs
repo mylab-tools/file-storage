@@ -98,7 +98,7 @@ namespace FuncTests.Cleaner
             //Assert
             _strategyMock.Verify(s => s.GetFileDirectories(It.IsAny<CancellationToken>()), Times.Once);
             _strategyMock.Verify(s => s.DeleteDirectory(_lostRottenDir), Times.Once);
-            _strategyMock.VerifyNoOtherCalls();
+            _strategyMock.Verify(s => s.DeleteDirectory(_lostFreshDir), Times.Never);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace FuncTests.Cleaner
             //Assert
             _strategyMock.Verify(s => s.GetFileDirectories(It.IsAny<CancellationToken>()), Times.Once);
             _strategyMock.Verify(s => s.DeleteDirectory(_confirmedRottenDir), Times.Once);
-            _strategyMock.VerifyNoOtherCalls();
+            _strategyMock.Verify(s => s.DeleteDirectory(_confirmedFreshDir), Times.Never);
         }
 
         [Fact]

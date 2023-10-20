@@ -1,15 +1,24 @@
-﻿using System.Net.Http.Headers;
-using MyLab.FileStorage.Models;
-using MyLab.FileStorage.Tools;
-
-namespace MyLab.FileStorage.Services
+﻿namespace MyLab.FileStorage.Services
 {
     public interface IDownloadService
     {
         string CreateDownloadToken(Guid fileId);
 
-        Task<(RangeStreamReader.ReadRange[] FileReads, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId, RangeHeaderValue rangeHeader);
+        Task<ReadFile> ReadFileAsync(Guid fileId);
+    }
 
-        Task<(byte[] Content, StoredFileMetadataDto? Metadata)> ReadContentAsync(Guid fileId);
+    public class ReadFile
+    {
+        public string? Filename { get; set; }
+        
+        public DateTime? Created { get; set; }
+        
+        public Stream ReadStream { get; }
+
+        public string? Md5{ get; set; }
+
+        public ReadFile(Stream readStream) 
+            => ReadStream = readStream;
+
     }
 }

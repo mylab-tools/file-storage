@@ -99,24 +99,6 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     }
 
     [Fact]
-    public async Task ShouldNotDownloadMultiplePartialFileByToken()
-    {
-        //Arrange
-        //_fileStream.Seek(0, SeekOrigin.Begin);
-
-        var rangeHeader = new RangeHeaderValue();
-        rangeHeader.Ranges.Add(new RangeItemHeaderValue(0, 1));
-        rangeHeader.Ranges.Add(new RangeItemHeaderValue(0, 1));
-
-        var token = await _api.CreateDownloadTokenAsync(_fileId);
-
-        //Act && Assert
-        var e = await Assert.ThrowsAsync<ResponseCodeException>(() => _api.DownloadByToken(token, rangeHeader));
-        Assert.Equal(HttpStatusCode.RequestedRangeNotSatisfiable, e.StatusCode);
-        Assert.Contains("not supported", e.ServerMessage);
-    }
-
-    [Fact]
     public async Task ShouldDownloadFullFileById()
     {
         //Arrange
@@ -147,22 +129,6 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
         //Assert
         Assert.NotNull(downloadedFileData);
         Assert.Equal(expectedResult, Encoding.UTF8.GetString(downloadedFileData));
-    }
-
-    [Fact]
-    public async Task ShouldNotDownloadMultiplePartialFileById()
-    {
-        //Arrange
-        //_fileStream.Seek(0, SeekOrigin.Begin);
-
-        var rangeHeader = new RangeHeaderValue();
-        rangeHeader.Ranges.Add(new RangeItemHeaderValue(0, 1));
-        rangeHeader.Ranges.Add(new RangeItemHeaderValue(0, 1));
-
-        //Act && Assert
-        var e = await Assert.ThrowsAsync<ResponseCodeException>(() => _api.DownloadByFileId(_fileId, rangeHeader));
-        Assert.Equal(HttpStatusCode.RequestedRangeNotSatisfiable, e.StatusCode);
-        Assert.Contains("not supported", e.ServerMessage);
     }
 
     [Fact]
