@@ -8,7 +8,7 @@ Docker образ `API`: [![Docker image](https://img.shields.io/static/v1?label
 
 Docker образ `Clenaer`: [![Docker image](https://img.shields.io/static/v1?label=docker&style=flat&logo=docker&message=image&color=blue)](https://github.com/orgs/mylab-tools/packages/container/package/fs-cleaner)
 
-Спецификация `API` : [![API specification](https://img.shields.io/badge/OAS3-v1-green)](https://app.swaggerhub.com/apis/OZZYEXT/MyLab.FileStorage/1.1) 
+Спецификация `API` : [![API specification](https://img.shields.io/badge/OAS3-v1-green)](https://app.swaggerhub.com/apis/OZZYEXT/MyLab.FileStorage/1.1.1) 
 
 Клиент: [![NuGet](https://img.shields.io/nuget/v/MyLab.FileStorage.Client.svg)](https://www.nuget.org/packages/MyLab.FileStorage.Client/)
 
