@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MyLab.ApiClient.Test;
 using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
+using MyLab.Log.XUnit;
 using Xunit.Abstractions;
 
 namespace IntegrationTest;

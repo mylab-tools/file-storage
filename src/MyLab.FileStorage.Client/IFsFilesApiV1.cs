@@ -30,5 +30,5 @@ public interface IFsFilesApiV1
     /// </summary>
     [Post("confirmation")]
     [ExpectedCode(HttpStatusCode.NoContent)]
-    Task ConfirmFileAsync([Path("file_id")] Guid fileId);
+    Task ConfirmFileAsync([Path("file_id")] Guid fileId, [Query("ttlh")] int? ttlh = null);
 }

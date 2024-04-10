@@ -4,6 +4,7 @@ using MyLab.ApiClient.Test;
 using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
 using MyLab.FileStorage.Services;
+using MyLab.Log.XUnit;
 using Xunit.Abstractions;
 
 namespace FuncTests;

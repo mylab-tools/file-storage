@@ -331,10 +331,7 @@ namespace FuncTests
         public void ShouldValidContract()
         {
             //Arrange
-            var apiContractValidator = new ApiContractValidator()
-            {
-                ContractKeyMustBeSpecified = true
-            };
+            var apiContractValidator = new ApiContractValidator();
 
             //Act & Assert
             var validationResult = apiContractValidator.Validate(typeof(IFsUploadApiV1));

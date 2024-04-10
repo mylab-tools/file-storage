@@ -8,6 +8,7 @@ using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Tools;
+using MyLab.Log.XUnit;
 using Newtonsoft.Json;
 using Xunit.Abstractions;
 

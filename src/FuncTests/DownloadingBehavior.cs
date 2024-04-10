@@ -10,6 +10,7 @@ using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Services;
+using MyLab.Log.XUnit;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -218,10 +219,7 @@ public class DownloadingBehavior : IClassFixture<TestApi<Program, IFsDownloadApi
     public void ShouldValidContract()
     {
         //Arrange
-        var apiContractValidator = new ApiContractValidator
-        {
-            ContractKeyMustBeSpecified = true
-        };
+        var apiContractValidator = new ApiContractValidator();
 
         //Act
         var validationResult = apiContractValidator.Validate(typeof(IFsDownloadApiV1));
