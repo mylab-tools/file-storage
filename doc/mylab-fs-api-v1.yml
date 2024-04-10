@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: MyLab.FileStorage API
-  version: '1.1.1'
+  version: '1.1.2'
 tags:
   - name: Files
   - name: Upload
@@ -53,6 +53,12 @@ paths:
       description: Confirm file after uploading
       parameters:
       - $ref: '#/components/parameters/FileId'
+      - in: query
+        required: false
+        name: ttlh
+        description: file lifetime in hours
+        schema:
+          $ref: '#/components/schemas/Ttlh'
       responses:
         '204':
           description: Confirmed successfully
@@ -252,6 +258,12 @@ components:
   
   schemas:
   
+    Ttlh:
+      description: File lifetime in hours
+      type: integer
+      format: int32
+      example: 1
+  
     NewFileRequest:
       type: object
       description: Contains parameters for new file
@@ -263,10 +275,7 @@ components:
         labels:
           $ref: '#/components/schemas/FileLabels'
         ttlh:
-          description: Вермя жизни файла в часах
-          type: integer
-          format: int32
-          example: 1
+          $ref: '#/components/schemas/Ttlh'
   
     NewFile:
       type: object

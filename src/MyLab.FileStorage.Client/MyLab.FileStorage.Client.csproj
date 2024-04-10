@@ -3,16 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>1.4.3</Version>
+    <Version>1.4.4</Version>
     <Authors>Andrey O.</Authors>
-    <Copyright>Copyright (c) 2023 Andrey Osintsev &lt;ozzy.ext@gmail.com&gt;</Copyright>
+    <Copyright>Copyright (c) 2024 Andrey Osintsev &lt;ozzy.ext@gmail.com&gt;</Copyright>
     <PackageProjectUrl>https://github.com/mylab-tools/file-storage</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mylab-tools/file-storage.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>tools.png</PackageIcon>
-    <AssemblyVersion>1.4.3.2010</AssemblyVersion>
-    <FileVersion>1.4.3.2010</FileVersion>
+    <AssemblyVersion>1.4.4.1004</AssemblyVersion>
+    <FileVersion>1.4.4.1004</FileVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
@@ -34,7 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.0" />
-    <PackageReference Include="MyLab.ApiClient" Version="3.16.26" />
+    <PackageReference Include="MyLab.ApiClient" Version="3.20.30" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
   </ItemGroup>
 

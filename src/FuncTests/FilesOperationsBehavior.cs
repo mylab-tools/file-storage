@@ -9,6 +9,7 @@ using MyLab.FileStorage;
 using MyLab.FileStorage.Client;
 using MyLab.FileStorage.Models;
 using MyLab.FileStorage.Services;
+using MyLab.Log.XUnit;
 using Xunit.Abstractions;
 
 namespace FuncTests
@@ -196,10 +197,7 @@ namespace FuncTests
         public void ShouldValidContract()
         {
             //Arrange
-            var apiContractValidator = new ApiContractValidator()
-            {
-                ContractKeyMustBeSpecified = true
-            };
+            var apiContractValidator = new ApiContractValidator();
 
             //Act & Assert
             var validationResult = apiContractValidator.Validate(typeof(IFsFilesApiV1));
